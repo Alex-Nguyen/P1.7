@@ -2,6 +2,9 @@
 # Page
 https://alex-nguyen.github.io/HCIP1/.
 
+# Sketch
+https://alex-nguyen.github.io/HCIP1/sketch-presentation/sketch.html
+
 ## Group members:
 1. Vinh Nguyen (ID 79)
 2. Huyen Nguyen (ID 31)
