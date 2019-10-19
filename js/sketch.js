@@ -58,21 +58,28 @@ function preload() {
         handleClientLoad();
     });
 }
+function loadTwitterScript() {
+    var script = document.createElement('script');
+    script.src='https://platform.twitter.com/widgets.js';
+    script.charset ='utf-8'
+    document.body.appendChild(script)
+}
 
 function loadIcon(wt) {
     icon = loadImage(`http://openweathermap.org/img/wn/${wt.weather[0].icon}@2x.png`);
 }
 
 function setup() {
-    canvas = createCanvas(600, 480);
+    canvas = createCanvas(windowWidth, windowHeight);
     webcam = createCapture(VIDEO);
     webcam.loop();
     webcam.hide();
     //Put canvas in center of window
-    canvas.position(windowWidth / 2 - width / 2, windowHeight / 2 - height / 2);
+    canvas.position(0, 0);
 
     authorizeButton = createButton('Authorize');
     authorizeButton.mousePressed(handleAuthClick);
+    loadTwitterScript();
 
 }
 function handleSignoutClick(event) {

@@ -6,8 +6,21 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <style>
+        #twitter-widget-0{
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+        }
+        #defaultCanvas0{
+            z-index: -2;
+        }
+    </style>
 </head>
 <body>
+<a id="twitter" transparent class="twitter-timeline" data-width="150" noheader nofooter
+   data-height="300" data-tweet-limit="3" href="https://twitter.com/VinhTTU">
 <button id="authorize_button" style="display: none;">Authorize</button>
 <button id="signout_button" style="display: none;">Sign Out</button>
 <pre id="content" style="white-space: pre-wrap;"></pre>
