@@ -100,7 +100,7 @@ function listUpcomingEvents() {
         if (events.length > 0) {
             for (i = 0; i < events.length; i++) {
                 var event = events[i];
-                console.log(event)
+
                 var when =  event.start.dateTime.slice(11,16)+'-'+event.end.dateTime.slice(11,16);
                 if (!when) {
                     when = event.start.date;
