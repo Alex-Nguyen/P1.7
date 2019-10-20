@@ -47,7 +47,7 @@ jQuery.loadScript = function (url, callback) {
     });
 }
 function preload() {
-    //weatherUrl = "api.openweathermap.org/data/2.5/weather?zip=94040,us&APPID=110d9b8e28093bca1255c95aa342c445";
+    //weatherUrl = "api.openweathermap.org/data/2.5/weather?zip=79415,us&APPID=110d9b8e28093bca1255c95aa342c445";
     // weatherData = loadJSON(weatherUrl, loadIcon);
     weatherData = weatherObj;
     icon = loadImage(`http://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`);
