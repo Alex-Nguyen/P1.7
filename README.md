@@ -22,12 +22,12 @@ After log in:
 
 
 ### Functions:
-Recognize face for logging in
-Sync calendar for upcoming events
-Display weather data
-Visualize health data
-Load social media feeds
-
+- Recognize face for logging in
+- Sync calendar for upcoming events
+- Display weather data
+- Visualize health data
+- Load social media feeds
+- Personalize, customization for each user
 
 ## How to get personal data from Firebase
 
