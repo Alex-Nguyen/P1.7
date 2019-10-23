@@ -12,4 +12,35 @@ https://alex-nguyen.github.io/HCIP1/sketch-presentation/sketch.html
 
 ## Interface design for bathroom mirror
 
+## How to get personal data from Firebase
 
+1. Include these libraries
+```
+   <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-app.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-database.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-analytics.js"></script>
+```
+2. Add this code for initialize Firebase
+````
+var firebaseConfig = {
+            apiKey: "AIzaSyAa6_EenZKfzVFOqiWTB3qNFrQNqY6UlpE",
+            authDomain: "healthkitforclass.firebaseapp.com",
+            databaseURL: "https://healthkitforclass.firebaseio.com",
+            projectId: "healthkitforclass",
+            storageBucket: "healthkitforclass.appspot.com",
+            messagingSenderId: "10115099027",
+            appId: "1:10115099027:web:f32cb07dd50e089a92a066",
+            measurementId: "G-Y1B923BPE2"
+        };
+        // Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+firebase.analytics();
+````
+3. Query data from Firebase database
+````
+let rootNode = firebase.database().ref()
+let refNodes = rootNode.child("node-to-ref");
+refNodes.once("value",function (data) {
+   //Your coding for data here
+}
+````
