@@ -64,8 +64,9 @@ refNodes.once("value",function (data) {
 
 ## Work reports
 ### Vinh Nguyen 
-
+1. Instruction to get and syn your data (from iPhone) to Firebase
 ````
+Step 1: Clone or Download the HealthKitForClass folder
 ````
 
 ### Huyen Nguyen
