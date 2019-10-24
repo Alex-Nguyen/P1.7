@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -15,7 +15,7 @@
 		1F01F521235BFE6B0004BAC1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1F01F520235BFE6B0004BAC1 /* Assets.xcassets */; };
 		1F01F524235BFE6B0004BAC1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F01F522235BFE6B0004BAC1 /* LaunchScreen.storyboard */; };
 		1F01F52E235BFE820004BAC1 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F01F52D235BFE820004BAC1 /* HealthKit.framework */; };
-		1F01F530235C1B490004BAC1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1F01F52F235C1B490004BAC1 /* GoogleService-Info.plist */; };
+		BBB62D5423625F50001FA659 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BBB62D5323625F50001FA659 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,9 +29,9 @@
 		1F01F525235BFE6B0004BAC1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1F01F52B235BFE820004BAC1 /* HealthKitForClass.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HealthKitForClass.entitlements; sourceTree = "<group>"; };
 		1F01F52D235BFE820004BAC1 /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
-		1F01F52F235C1B490004BAC1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3489723A7365E9CF2E423456 /* Pods-HealthKitForClass.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HealthKitForClass.release.xcconfig"; path = "Target Support Files/Pods-HealthKitForClass/Pods-HealthKitForClass.release.xcconfig"; sourceTree = "<group>"; };
 		9FB394EC2DF6C21C263E2B37 /* Pods_HealthKitForClass.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_HealthKitForClass.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BBB62D5323625F50001FA659 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		DAFAB2EDB442D05576B288FD /* Pods-HealthKitForClass.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HealthKitForClass.debug.xcconfig"; path = "Target Support Files/Pods-HealthKitForClass/Pods-HealthKitForClass.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -71,8 +71,8 @@
 			children = (
 				1F01F52B235BFE820004BAC1 /* HealthKitForClass.entitlements */,
 				1F01F517235BFE6A0004BAC1 /* AppDelegate.swift */,
+				BBB62D5323625F50001FA659 /* GoogleService-Info.plist */,
 				1F01F519235BFE6A0004BAC1 /* SceneDelegate.swift */,
-				1F01F52F235C1B490004BAC1 /* GoogleService-Info.plist */,
 				1F01F51B235BFE6A0004BAC1 /* ViewController.swift */,
 				1F01F51D235BFE6A0004BAC1 /* Main.storyboard */,
 				1F01F520235BFE6B0004BAC1 /* Assets.xcassets */,
@@ -97,7 +97,6 @@
 				DAFAB2EDB442D05576B288FD /* Pods-HealthKitForClass.debug.xcconfig */,
 				3489723A7365E9CF2E423456 /* Pods-HealthKitForClass.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -162,7 +161,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1F01F524235BFE6B0004BAC1 /* LaunchScreen.storyboard in Resources */,
-				1F01F530235C1B490004BAC1 /* GoogleService-Info.plist in Resources */,
+				BBB62D5423625F50001FA659 /* GoogleService-Info.plist in Resources */,
 				1F01F521235BFE6B0004BAC1 /* Assets.xcassets in Resources */,
 				1F01F51F235BFE6A0004BAC1 /* Main.storyboard in Resources */,
 			);

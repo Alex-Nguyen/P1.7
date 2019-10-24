@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>10115099027-gckkidbggqgsqbu9njla8rlk642087ip.apps.googleusercontent.com</string>
+	<string>470126462623-ouv4vmgckp5nhvcc7hocqth848fn3rmt.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.10115099027-gckkidbggqgsqbu9njla8rlk642087ip</string>
+	<string>com.googleusercontent.apps.470126462623-ouv4vmgckp5nhvcc7hocqth848fn3rmt</string>
 	<key>API_KEY</key>
-	<string>AIzaSyDeVG-34o_DwJn2tN5W25eVrTiUkDChwG8</string>
+	<string>AIzaSyAh2bh0rMqhNGP3hurCJTTSV1E7aFkD8aI</string>
 	<key>GCM_SENDER_ID</key>
-	<string>10115099027</string>
+	<string>470126462623</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>ttu.HealthKitForClass</string>
+	<string>cslab305.HCI</string>
 	<key>PROJECT_ID</key>
-	<string>healthkitforclass</string>
+	<string>hciproject1-1569711662969</string>
 	<key>STORAGE_BUCKET</key>
-	<string>healthkitforclass.appspot.com</string>
+	<string>hciproject1-1569711662969.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,8 +29,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:10115099027:ios:fcb3c1808efa75e692a066</string>
+	<string>1:470126462623:ios:c33ba355ca53943e8f44aa</string>
 	<key>DATABASE_URL</key>
-	<string>https://healthkitforclass.firebaseio.com</string>
+	<string>https://hciproject1-1569711662969.firebaseio.com</string>
 </dict>
 </plist>
