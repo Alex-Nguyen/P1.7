@@ -141,8 +141,8 @@ var currentProfile;
 !function(e) {
     let t = Backbone.Model.extend({
         init:function () {
-            HCIG7.vinhProfile.init();
-            //this.loadFaceAPI();
+            // HCIG7.vinhProfile.init();
+            this.loadFaceAPI();
         },
         loadFaceAPI:async function() {
             await faceapi.loadMtcnnModel('model/')
