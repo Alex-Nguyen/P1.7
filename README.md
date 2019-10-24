@@ -67,6 +67,13 @@ refNodes.once("value",function (data) {
 1. Instruction to get and syn your data (from iPhone) to Firebase
 ````
 Step 1: Clone or Download the HealthKitForClass folder
+Step 2: Create an Apple Developer Account (https://developer.apple.com/programs/enroll/)
+Step 3: Run the file HealthKitForClass.xcworkspace
+Step 4: Select target device as (simulator or your phone)
+Step 5: Run the application
+Step 6: Grant access to HealthKit Data from your phone
+Step 7: Syn your data to Firebase
+
 ````
 
 ### Huyen Nguyen
