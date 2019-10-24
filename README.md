@@ -12,6 +12,23 @@ https://alex-nguyen.github.io/HCIP1/sketch-presentation/sketch.html
 
 ## Interface design for bathroom mirror
 
+Before log in:
+
+![](https://alex-nguyen.github.io/HCIP1/sketch-presentation/images/before.png)
+
+After log in:
+
+![](https://alex-nguyen.github.io/HCIP1/sketch-presentation/images/p1.group7.png)
+
+
+### Functions:
+- Recognize face for logging in
+- Sync calendar for upcoming events
+- Display weather data
+- Visualize health data
+- Load social media feeds
+- Personalize, customization for each user
+
 ## How to get personal data from Firebase
 
 1. Include these libraries
