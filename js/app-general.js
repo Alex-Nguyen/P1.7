@@ -24,6 +24,28 @@ var currentProfile;
             }
 
         },
+        initHuyen:function () {
+            if(!this.get('isInitialized')){
+                this.set('isInitialized',true)
+                this.set('canvasWidth',window.innerWidth);
+                this.set('canvasHeight',window.innerHeight);
+                this.loadIcon  = this.loadIcon.bind(this)
+                this.weatherData = loadJSON("http://api.openweathermap.org/data/2.5/weather?zip=79415,us&APPID=110d9b8e28093bca1255c95aa342c445&units=metric", this.loadIcon);
+                this.weatherData.mainX = 350;
+                this.weatherData.mainY = 400;
+                const myDays=
+                    ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+                this.months = [`January`, `February`, `March`, `April`, `May`, `June`, `July`, `August`, `September`, `October`, `November`, `December`];
+                let td = new Date();
+                let today = td.getDay()
+                this.today = myDays[today];
+                this.name = 'Huyen Nguyen';
+                this.connectToGoogleAccount();
+
+                currentProfile = this;
+            }
+
+        },
         connectToGoogleAccount:function(){
             let that = this;
             jQuery.loadScript = function (url, callback) {
@@ -136,6 +158,7 @@ var currentProfile;
         }
     });
     e.vinhProfile = new t()
+    e.huyenProfile = new t()
 }(HCIG7 || (HCIG7 = {}));
 
 !function(e) {
@@ -164,7 +187,7 @@ var currentProfile;
         },
         onDetection: async function () {
             let inputVideo = document.getElementById('inputVideo');
-            const labels = ['vinhProfile']
+            const labels = ['vinhProfile', 'huyenProfile'];
             let fullFaceDescriptions = await faceapi.detectAllFaces(inputVideo, this.options).withFaceLandmarks().withFaceDescriptors()
             let labeledFaceDescriptors = await Promise.all(
                 labels.map(async label => {
@@ -190,6 +213,11 @@ var currentProfile;
             for(let i =0; i<results.length;i++){
                 if(results[i]._label==='vinhProfile'){
                     HCIG7[results[i]._label].init();
+                    this.off('faceDetection', this.onDetection)
+                    return null;
+                }
+                else if (results[i]._label==='huyenProfile'){
+                    HCIG7[results[i]._label].initHuyen();
                     this.off('faceDetection', this.onDetection)
                     return null;
                 }
