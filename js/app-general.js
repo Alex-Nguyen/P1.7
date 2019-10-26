@@ -1,5 +1,6 @@
 var HCIG7 ={};
 var currentProfile;
+var currentUser;
 !function(e) {
     let t = Backbone.Model.extend({
         init:function () {
@@ -148,7 +149,6 @@ var currentProfile;
         },
         loadIcon:function(){
 
-
             this.weatherIcon = loadImage(`http://openweathermap.org/img/wn/${this.weatherData.weather[0].icon}@2x.png`);
             this.weatherIcon.x =75;
             this.weatherIcon.y = 75;
@@ -157,8 +157,15 @@ var currentProfile;
             // console.log("Hello world")
         }
     });
-    e.vinhProfile = new t()
-    e.huyenProfile = new t()
+    if (currentUser === 'vinh'){
+        e.vinhProfile = new t()
+    }
+    else if (currentUser === 'huyen'){
+        e.huyenProfile = new t()
+    }
+    else if (currentUser === 'linh'){
+        e.linhProfile = new t()
+    }
 }(HCIG7 || (HCIG7 = {}));
 
 !function(e) {
@@ -212,11 +219,13 @@ var currentProfile;
             const results = fullFaceDescriptions.map(fd => faceMatcher.findBestMatch(fd.descriptor))
             for(let i =0; i<results.length;i++){
                 if(results[i]._label==='vinhProfile'){
+                    currentUser = 'vinh';
                     HCIG7[results[i]._label].init();
                     this.off('faceDetection', this.onDetection)
                     return null;
                 }
                 else if (results[i]._label==='huyenProfile'){
+                    currentUser = 'huyen';
                     HCIG7[results[i]._label].initHuyen();
                     this.off('faceDetection', this.onDetection)
                     return null;
