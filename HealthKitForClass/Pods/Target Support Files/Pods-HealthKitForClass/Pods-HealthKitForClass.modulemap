@@ -1,0 +1,6 @@
+framework module Pods_HealthKitForClass {
+  umbrella header "Pods-HealthKitForClass-umbrella.h"
+
+  export *
+  module * { export * }
+}
