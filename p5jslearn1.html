@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>P5js experiment</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+<body>
+
+</body>
+<script>
+    var x = 0;
+    let counter = 0;
+    var bubbles = [];
+    var btnMove
+    let btnMoveVisible = false;
+    let isDraggable = false;
+    let dragging =false;
+    let draggingid=null;
+    let widgets = [];
+    class Widget{
+        constructor(id,x,y,w,h){
+            this.id = id;
+            this.x = x;
+            this.y  = y;
+            this.w = w;
+            this.h = h;
+            this.tempX = x;
+            this.tempY = y;
+            this.active = false;
+            this.color = 'blue'
+        }
+        display (){
+            noStroke();
+            fill(this.color);
+            rect(this.tempX, this.tempY, this.w, this.h);
+        }
+        isDraggable(){
+            this.tempX = this.x + random(-1, 1)
+            this.tempY = this.y + random(-1, 1)
+        }
+        isFinish(){
+            this.x = this.tempX;
+            this.y = this.tempY;
+        }
+    }
+    function mouseDragged(event) {
+        cursor(MOVE);
+        if(isDraggable){
+            if (widgets.length > 0) {
+                for (var i = 0; i < widgets.length; i++) {
+                    var item = widgets[i];
+                    if (item.active) {
+                        item.tempX = mouseX;
+                        item.tempY = mouseY;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Prevent default functionality.
+        return false;
+    }
+    function setup() {
+        createCanvas(800, 600);
+        btnMove = createButton('Done');
+        btnMove.position(19, 19);
+        for(let i = 0; i< 5; i++){
+            let x = random(width)
+            let y = random(height)
+            let widget = new Widget(i,x, y, 40, 40)
+
+            widgets.push(widget)
+        }
+        btnMove.hide()
+        btnMove.mouseOver(btnMoveMouseOver)
+        btnMove.mousePressed(btnMoveMousePressed)
+
+    }
+    function btnMoveMousePressed() {
+        isDraggable = false;
+        btnMove.hide()
+    }
+    function btnMoveMouseOver() {
+
+    }
+
+    function mouseReleased() {
+        for(let i=0; i< widgets.length; i++){
+            let item = widgets[i];
+            item.isFinish()
+        }
+        counter =0;
+        cursor(ARROW);
+        dragging = false;
+    }
+
+    function mousePressed() {
+        cursor(MOVE);
+        dragging = true;
+        if(isDraggable){
+            for(let i=0; i< widgets.length; i++){
+                let item = widgets[i];
+                if (mouseX > item.tempX && mouseX < item.tempX + item.w && mouseY > item.tempY && mouseY < item.tempY + item.h){
+                    item.active = true;
+                    item.color ='#f00'
+                }else{
+                    item.isFinish()
+                    item.active = false;
+                    item.color ='blue'
+                }
+            }
+        }
+
+
+        // Prevent default functionality.
+        return false;
+    }
+
+    function draw() {
+        background('#fff');
+        if(mouseIsPressed){
+            counter++
+        }
+        if(counter > 120){
+            isDraggable = true ;
+            btnMove.show()
+            console.log(counter)
+        }
+        for(let i=0; i< widgets.length; i++){
+            let item = widgets[i];
+            if(isDraggable&&!dragging){
+                item.isDraggable()
+            }
+            item.display()
+        }
+
+    }
+</script>
+</html>
