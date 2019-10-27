@@ -25,7 +25,7 @@
         const input = document.getElementById('inputVideo')
         const fullFaceDescriptions = await faceapi.detectAllFaces(input, options).withFaceLandmarks().withFaceDescriptors()
 
-        const labels = ['ref1']
+        const labels = ['huyenProfile']
         const labeledFaceDescriptors = await Promise.all(
             labels.map(async label => {
                 context.clearRect(0, 0, canvas.width, canvas.height);
