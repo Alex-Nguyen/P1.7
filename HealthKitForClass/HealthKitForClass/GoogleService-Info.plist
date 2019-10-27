@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>470126462623-ouv4vmgckp5nhvcc7hocqth848fn3rmt.apps.googleusercontent.com</string>
+	<string>189248516188-c0n4o51qn2vthqkev06ubvndf1i983rd.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.470126462623-ouv4vmgckp5nhvcc7hocqth848fn3rmt</string>
+	<string>com.googleusercontent.apps.189248516188-c0n4o51qn2vthqkev06ubvndf1i983rd</string>
 	<key>API_KEY</key>
-	<string>AIzaSyAh2bh0rMqhNGP3hurCJTTSV1E7aFkD8aI</string>
+	<string>AIzaSyDRbyguiuhjNg4WkZWeJfABUw-AFcE6U_0</string>
 	<key>GCM_SENDER_ID</key>
-	<string>470126462623</string>
+	<string>189248516188</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>cslab305.HCI</string>
+	<string>cslab305.HealthKitFireBase</string>
 	<key>PROJECT_ID</key>
-	<string>hciproject1-1569711662969</string>
+	<string>healthkitfirebase</string>
 	<key>STORAGE_BUCKET</key>
-	<string>hciproject1-1569711662969.appspot.com</string>
+	<string>healthkitfirebase.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,8 +29,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:470126462623:ios:c33ba355ca53943e8f44aa</string>
+	<string>1:189248516188:ios:550186c58b97d0dfb17699</string>
 	<key>DATABASE_URL</key>
-	<string>https://hciproject1-1569711662969.firebaseio.com</string>
+	<string>https://healthkitfirebase.firebaseio.com</string>
 </dict>
 </plist>

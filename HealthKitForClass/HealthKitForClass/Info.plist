@@ -53,14 +53,12 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>NSHomeKitUsageDescription</key>
-	<string></string>
-	<key>NSHealthClinicalHealthRecordsShareUsageDescription</key>
-	<string>Display health information in the app</string>
 	<key>NSHealthShareUsageDescription</key>
-	<string>Sharing data for the app</string>
+	<string>For testing the application</string>
+	<key>NSHealthClinicalHealthRecordsShareUsageDescription</key>
+	<string>For testing the application</string>
 	<key>NSHealthUpdateUsageDescription</key>
-	<string>Updating data</string>
+	<string>For testing the application</string>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
