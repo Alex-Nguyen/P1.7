@@ -1,5 +1,10 @@
 var HCIG7 ={};
 var currentProfile;
+var btnBrighness
+let slider;
+var canvas;
+let sliderVisible = false;
+var webcam;
 !function(e) {
     let t = Backbone.Model.extend({
         init:function () {
@@ -141,8 +146,8 @@ var currentProfile;
 !function(e) {
     let t = Backbone.Model.extend({
         init:function () {
-            // HCIG7.vinhProfile.init();
-            this.loadFaceAPI();
+            HCIG7.vinhProfile.init();
+            // this.loadFaceAPI();
         },
         loadFaceAPI:async function() {
             await faceapi.loadMtcnnModel('model/')
@@ -206,16 +211,34 @@ function preload() {
 }
 function setup() {
     canvas = createCanvas(windowWidth, windowHeight);
+    btnBrighness = createButton('Brighness')
+    btnBrighness.position(19, height-60)
+    btnBrighness.style("background-color","#000");
+    btnBrighness.style("color","#fff");
+    btnBrighness.size(100,40)
+    btnBrighness.mousePressed(btnBrighnessMousePressed)
+    slider = createSlider(0, 255, 200);
+    slider.position(19, height-90);
+    slider.style('width', '100px');
+    slider.hide()
     webcam = createCapture(VIDEO);
     webcam.id('inputVideo')
     webcam.loop();
     webcam.hide();
     canvas.position(0, 0);
 }
-var canvas;
-var webcam;
+
+function btnBrighnessMousePressed() {
+
+    sliderVisible = !sliderVisible;
+    sliderVisible===true? slider.show():slider.hide()
+    let c = sliderVisible ===true?"#00f":"#000";
+    btnBrighness.style("background-color",c);
+    btnBrighness.style("color","#fff");
+}
 function draw() {
-    background(220);
+    let val = slider.value();
+    tint( val); // Display at half opacity
     image(webcam, 0, 0, width, height);
     HCIG7.globalSpace.trigger('faceDetection', deltaTime)
     if(currentProfile){

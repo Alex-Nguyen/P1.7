@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Magic Mirror Project - Group 7</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-analytics.js"></script>
+</head>
+<body>
+
+</body>
+<script>
+    /**
+     * Global variables
+     */
+    class Profile{
+        constructor(params){
+            this.name = params.name;
+            this.weatherLoc = params.weatherLoc;
+            this.clockLoc = params.clockLoc;
+            this.twitterLoc = params.twitterLoc;
+            this.healthLoc = params.healthLoc;
+            this.welcomeLoc = params.welcomeLoc;
+            this.apiKey = params.googleAPIkey;
+            this.clientId = params.googleclientId;
+            this.discoveryDocs = params.googlediscoveryDocs;
+            this.scope = params.googlescope
+            this.isReady = false;
+            this.loadWeatherData = this.loadWeatherData.bind(this)
+        }
+        init(){
+
+            this.loadWeatherData();
+        }
+        showData(){
+            this.displayWeather();
+        }
+        loadWeatherData(){
+            let _this = this;
+            loadJSON("http://api.openweathermap.org/data/2.5/weather?zip=79415,us&APPID=110d9b8e28093bca1255c95aa342c445&units=metric", function (data) {
+                _this.weatherData = data;
+                console.log(data)
+                _this.weatherIcon  = loadImage(`http://openweathermap.org/img/wn/${_this.weatherData.weather[0].icon}@2x.png`);
+                _this.isReady =true;
+            });
+        }
+        displayWeather(){
+            noStroke();
+            noFill();
+            rect(this.weatherLoc.tempX, this.weatherLoc.tempY, this.weatherLoc.w, this.weatherLoc.h);
+
+            image(this.weatherIcon , this.weatherLoc.tempX, this.weatherLoc.tempY, 50, 50);
+            fill("#00ff00");
+            textSize(18);
+            text(this.weatherData.main.temp +"°", this.weatherLoc.tempX + 40, this.weatherLoc.tempY+10);
+            fill(255);
+            textSize(12);
+            textStyle(BOLD);
+            fill(255,255,0)
+            text('C', this.weatherLoc.tempX + 110, this.weatherLoc.tempY + 5);
+
+            textStyle(NORMAL);
+            fill(255);
+            text(' | F', this.weatherLoc.tempX + 120, this.weatherLoc.tempY + 5);
+            fill(255);
+            textSize(12);
+            text(`${this.weatherData.main.temp_max}° / ${this.weatherData.main.temp_min}°`, this.weatherLoc.tempX + 50, this.weatherLoc.tempY + 25);
+            fill(255);
+            text(`Humidity: ${this.weatherData.main.humidity}%`, this.weatherLoc.tempX + 50, this.weatherLoc.tempY + 40);
+
+
+        }
+        displayClock(){}
+        displayTwitter(){}
+        displayHealthKit(){}
+    }
+
+    var WEBCAM, CANVAS, CURRENTPROFILE, counter = 0, isDraggable = false, btnMove, dragging = false;
+    const params = {
+      vinhProfile:{
+          name: "Vinh T. Nguyen",
+          weatherLoc:{
+              x:150,
+              y:30,
+              tempX:150,
+              tempY:30,
+              w:150,
+              h:100,
+          },
+          clockLoc:{
+              x:window.innerWidth/2,
+              y:30,
+              w:150,
+              h:100,
+          },
+          twitterLoc:{
+              x:10,
+              y:30,
+              w:150,
+              h:600,
+          },
+          healthLoc:{
+              x:10,
+              y:window.innerHeight - 100,
+              w:150,
+              h:50,
+          },
+          welcomeLoc:{
+              x:window.innerWidth - 200,
+              y:30,
+              w:150,
+              h:100,
+          },
+          googleAPIkey:"AIzaSyCtJzTr3KTtbMPC3Aa9uCOOsKnw5Zw44rg",
+          googleclientId: '470126462623-4fuglh8aupd7q6i815vs60q3u6ebl7rj.apps.googleusercontent.com',
+          googlediscoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
+          googlescope: "https://www.googleapis.com/auth/calendar.readonly"
+      },
+      huyenProfile:{},
+      linhProfile:{}
+    };
+
+    /**
+     * Setup control and parameters
+     */
+    function preload() {
+        CURRENTPROFILE = new Profile(params.vinhProfile)
+        CURRENTPROFILE.init()
+    }
+
+    function setup() {
+        CANVAS = createCanvas(windowWidth, windowHeight);
+        btnMove = createButton('Done');
+        btnMove.position(width-50,  19);
+        btnMove.hide()
+        WEBCAM = createCapture(VIDEO);
+        WEBCAM.id('inputVideo')
+        WEBCAM.loop();
+        WEBCAM.hide();
+        CANVAS.position(0, 0);
+
+    }
+    function draw() {
+        image(WEBCAM, 0, 0, width, height);
+        if(mouseIsPressed){
+            counter++
+        }
+        if(counter > 120){
+            isDraggable = true ;
+
+            btnMove.show()
+
+        }
+        if(CURRENTPROFILE.isReady){
+            CURRENTPROFILE.showData()
+        }
+    }
+
+    /**
+     * Interaction control section and parameters
+     * @param event
+     */
+    function mouseDragged(event) {
+        cursor(MOVE);
+        if(isDraggable){
+                if(CURRENTPROFILE.weatherLoc.active===true){
+                    CURRENTPROFILE.weatherLoc.tempX = mouseX;
+                    CURRENTPROFILE.weatherLoc.tempY = mouseY;
+                }
+            return false;
+        }
+    }
+
+    function mousePressed() {
+        cursor(MOVE);
+        dragging = true;
+        if(isDraggable){
+            // Check if weatherbox is clicked
+
+
+                if (mouseX > CURRENTPROFILE.weatherLoc.tempX && mouseX < CURRENTPROFILE.weatherLoc.tempX + CURRENTPROFILE.weatherLoc.w && mouseY > CURRENTPROFILE.weatherLoc.tempY && mouseY < CURRENTPROFILE.weatherLoc.tempY + CURRENTPROFILE.weatherLoc.h){
+                    CURRENTPROFILE.weatherLoc.active = true;
+                    CURRENTPROFILE.weatherLoc.color ='#f00'
+                }else{
+                    CURRENTPROFILE.weatherLoc.active = false;
+                    CURRENTPROFILE.weatherLoc.color ='blue'
+                }
+            return false;
+        }
+    }
+
+    function mouseReleased() {
+        counter =0;
+        cursor(ARROW);
+        dragging = false;
+    }
+
+</script>
+</html>
