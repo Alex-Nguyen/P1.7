@@ -40,6 +40,10 @@
         showData(){
             this.displayWeather();
         }
+        shakenWeatherBox(){
+            this.weatherLoc.tempX = this.weatherLoc.x + random(-1, 1)
+            this.weatherLoc.tempY = this.weatherLoc.y + random(-1, 1)
+        }
         loadWeatherData(){
             let _this = this;
             loadJSON("http://api.openweathermap.org/data/2.5/weather?zip=79415,us&APPID=110d9b8e28093bca1255c95aa342c445&units=metric", function (data) {
@@ -51,11 +55,13 @@
         }
         displayWeather(){
             noStroke();
-            noFill();
+            this.weatherLoc.active===true? fill("#808080"):noFill();
             rect(this.weatherLoc.tempX, this.weatherLoc.tempY, this.weatherLoc.w, this.weatherLoc.h);
 
             image(this.weatherIcon , this.weatherLoc.tempX, this.weatherLoc.tempY, 50, 50);
-            fill("#00ff00");
+
+
+            fill(this.weatherLoc.color);
             textSize(18);
             text(this.weatherData.main.temp +"°", this.weatherLoc.tempX + 40, this.weatherLoc.tempY+10);
             fill(255);
@@ -91,6 +97,7 @@
               tempY:30,
               w:150,
               h:100,
+              color:'#FFF'
           },
           clockLoc:{
               x:window.innerWidth/2,
@@ -137,6 +144,7 @@
         CANVAS = createCanvas(windowWidth, windowHeight);
         btnMove = createButton('Done');
         btnMove.position(width-50,  19);
+        btnMove.mousePressed(btnMoveMousePressed)
         btnMove.hide()
         WEBCAM = createCapture(VIDEO);
         WEBCAM.id('inputVideo')
@@ -157,6 +165,9 @@
 
         }
         if(CURRENTPROFILE.isReady){
+            if(isDraggable&&!dragging){
+                CURRENTPROFILE.shakenWeatherBox()
+            }
             CURRENTPROFILE.showData()
         }
     }
@@ -165,6 +176,7 @@
      * Interaction control section and parameters
      * @param event
      */
+
     function mouseDragged(event) {
         cursor(MOVE);
         if(isDraggable){
@@ -187,6 +199,8 @@
                     CURRENTPROFILE.weatherLoc.active = true;
                     CURRENTPROFILE.weatherLoc.color ='#f00'
                 }else{
+                    CURRENTPROFILE.weatherLoc.x = CURRENTPROFILE.weatherLoc.tempX;
+                    CURRENTPROFILE.weatherLoc.y = CURRENTPROFILE.weatherLoc.tempY;
                     CURRENTPROFILE.weatherLoc.active = false;
                     CURRENTPROFILE.weatherLoc.color ='blue'
                 }
@@ -198,7 +212,13 @@
         counter =0;
         cursor(ARROW);
         dragging = false;
+        CURRENTPROFILE.weatherLoc.x = CURRENTPROFILE.weatherLoc.tempX;
+        CURRENTPROFILE.weatherLoc.y = CURRENTPROFILE.weatherLoc.tempY;
     }
 
+    function btnMoveMousePressed() {
+        isDraggable = false;
+        btnMove.hide()
+    }
 </script>
 </html>
