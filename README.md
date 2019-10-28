@@ -78,4 +78,7 @@ Step 7: Syn your data to Firebase
 
 ### Huyen Nguyen
 
+1. Personalize user data
+
+
 ### Linh Manh

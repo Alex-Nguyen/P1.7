@@ -6,62 +6,223 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://platform.twitter.com/widgets.js"></script>
 
     <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-analytics.js"></script>
 </head>
 <body>
+<div id="timeline" style="display: none"></div>
 
 </body>
 <script>
     /**
      * Global variables
      */
-    class Profile{
-        constructor(params){
+    class Profile {
+        constructor(params) {
             this.name = params.name;
             this.weatherLoc = params.weatherLoc;
             this.clockLoc = params.clockLoc;
             this.twitterLoc = params.twitterLoc;
             this.healthLoc = params.healthLoc;
             this.welcomeLoc = params.welcomeLoc;
+            this.googleEventLoc = params.googleEventLoc;
             this.apiKey = params.googleAPIkey;
             this.clientId = params.googleclientId;
             this.discoveryDocs = params.googlediscoveryDocs;
-            this.scope = params.googlescope
+            this.scope = params.googlescope;
+            this.twAccount = params.twitterSpec.account;
+            this.twLimit = params.twitterSpec.limit;
             this.isReady = false;
+            this.twitterData = [];
             this.loadWeatherData = this.loadWeatherData.bind(this)
+            this.loadTwitterData = this.loadTwitterData.bind(this)
+            this.loadGoogleEvent = this.loadGoogleEvent.bind(this)
+
         }
-        init(){
+
+        init() {
 
             this.loadWeatherData();
+            this.loadTwitterData();
+            this.loadClockData();
+            this.loadGoogleEvent();
         }
-        showData(){
+
+        showData() {
             this.displayWeather();
+            this.displayTwitter();
+            this.displayClock();
+            this.displayGoogleEvents();
         }
-        loadWeatherData(){
+        loadGoogleEvent(){
+            let _this = this;
+            jQuery.loadScript = function (url, callback) {
+                jQuery.ajax({
+                    url: url,
+                    dataType: 'script',
+                    success: callback,
+                    async: true
+                });
+            }
+            $.loadScript('https://apis.google.com/js/api.js', function(){
+                gapi.load('client:auth2', function () {
+                    gapi.client.init({
+                        apiKey: _this.apiKey,
+                        clientId: _this.clientId,
+                        discoveryDocs: _this.discoveryDocs,
+                        scope: _this.scope
+                    }).then(function () {
+                        // Listen for sign-in state changes.
+                        console.log("Successfull")
+                        // let authorizeButton = document.getElementById('authorize_button');
+                        // let signoutButton = document.getElementById('signout_button');
+                         gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
+                        //
+                        // // Handle the initial sign-in state.
+                        updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+                        // authorizeButton.onclick = handleAuthClick;
+                        // signoutButton.onclick = handleSignoutClick;
+                    }, function(error) {
+                        appendPre(JSON.stringify(error, null, 2));
+                    });
+                });
+            });
+            function listUpcomingEvents() {
+                _this.eventList = [];
+
+                gapi.client.calendar.events.list({
+                    'calendarId': 'primary',
+                    'timeMin': (new Date()).toISOString(),
+                    'showDeleted': false,
+                    'singleEvents': true,
+                    'maxResults': 10,
+                    'orderBy': 'startTime'
+                }).then(function(response) {
+                    var events = response.result.items;
+                    if (events.length > 0) {
+                        for (let i = 0; i < events.length; i++) {
+                            var event = events[i];
+
+                            var when =  event.start.dateTime.slice(11,16)+'-'+event.end.dateTime.slice(11,16);
+                            if (!when) {
+                                when = event.start.date;
+                            }
+
+                            _this.eventList.push(event.summary + ' (' + when + ')')
+                        }
+                    }
+                });
+            }
+            function handleSignoutClick(event) {
+                gapi.auth2.getAuthInstance().signOut();
+                let step = document.getElementById('step')
+                step.style.display = 'none'
+                let sleep = document.getElementById('sleep')
+                sleep.style.display = 'none'
+                let twitter = document.getElementById('twitter-widget-0');
+                if(twitter) twitter.style.display = 'none';
+                currentProfile = null;
+            }
+            function updateSigninStatus(isSignedIn) {
+                listUpcomingEvents();
+            }
+            function handleAuthClick(event) {
+                let step = document.getElementById('step')
+                step.style.display = 'inline'
+                let sleep = document.getElementById('sleep')
+                sleep.style.display = 'inline'
+                let twitter = document.getElementById('twitter-widget-0');
+                if(twitter) twitter.style.display = 'inline';
+                gapi.auth2.getAuthInstance().signIn();
+
+                currentProfile = that;
+            }
+        }
+        loadTwitterData() {
+            let _this = this;
+            twttr.widgets.createTimeline(
+                {
+                    sourceType: 'profile',
+                    screenName: _this.twAccount,
+
+                },
+                document.getElementById('timeline'),
+                {
+                    width: '150',
+                    height: '700',
+                    tweetLimit: _this.twLimit,
+                }).then(function (el) {
+                var tweets = el.contentWindow.document.getElementsByClassName('timeline-TweetList-tweet customisable-border')
+                _this.twitterData.push({
+                    imgUrl: loadImage(tweets[0].getElementsByClassName('Avatar')[0].getAttribute('data-src-2x')),
+                    text: "@" + _this.twAccount
+                })
+                for (let item of tweets) {
+                    let avatar = item.getElementsByClassName('Avatar')[0].getAttribute('data-src-2x');
+                    let avatarImg = loadImage(avatar);
+                    let tweetText = item.getElementsByClassName('timeline-Tweet-text')[0].innerText;
+                    _this.twitterData.push({imgUrl: avatarImg, text: tweetText})
+
+                }
+
+            });
+        }
+
+        shakenWeatherBox() {
+            this.weatherLoc.tempX = this.weatherLoc.x + random(-1, 1)
+            this.weatherLoc.tempY = this.weatherLoc.y + random(-1, 1)
+        }
+
+        shakenTwitterBox() {
+            this.twitterLoc.tempX = this.twitterLoc.x + random(-1, 1)
+            this.twitterLoc.tempY = this.twitterLoc.y + random(-1, 1)
+        }
+        shakenGoogleEventBox(){
+            this.googleEventLoc.tempX = this.googleEventLoc.x + random(-1, 1)
+            this.googleEventLoc.tempY = this.googleEventLoc.y + random(-1, 1)
+        }
+
+        shakenClockBox() {
+            this.clockLoc.tempX = this.clockLoc.x + random(-1, 1)
+            this.clockLoc.tempY = this.clockLoc.y + random(-1, 1)
+        }
+
+        loadWeatherData() {
             let _this = this;
             loadJSON("http://api.openweathermap.org/data/2.5/weather?zip=79415,us&APPID=110d9b8e28093bca1255c95aa342c445&units=metric", function (data) {
                 _this.weatherData = data;
-                console.log(data)
-                _this.weatherIcon  = loadImage(`http://openweathermap.org/img/wn/${_this.weatherData.weather[0].icon}@2x.png`);
-                _this.isReady =true;
+                _this.weatherIcon = loadImage(`http://openweathermap.org/img/wn/${_this.weatherData.weather[0].icon}@2x.png`);
+                _this.isReady = true;
             });
         }
-        displayWeather(){
+
+        loadClockData() {
+            let dayofWeeks =
+                ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+            this.monthInText = [`January`, `February`, `March`, `April`, `May`, `June`, `July`, `August`, `September`, `October`, `November`, `December`]
+            let _today = new Date();
+            let today = _today.getDay()
+            this.today = dayofWeeks[today];
+        }
+
+        displayWeather() {
             noStroke();
-            noFill();
+            this.weatherLoc.active === true ? fill("#808080") : noFill();
             rect(this.weatherLoc.tempX, this.weatherLoc.tempY, this.weatherLoc.w, this.weatherLoc.h);
 
-            image(this.weatherIcon , this.weatherLoc.tempX, this.weatherLoc.tempY, 50, 50);
-            fill("#00ff00");
+            image(this.weatherIcon, this.weatherLoc.tempX, this.weatherLoc.tempY, 50, 50);
+
+
+            fill(this.weatherLoc.color);
             textSize(18);
-            text(this.weatherData.main.temp +"°", this.weatherLoc.tempX + 40, this.weatherLoc.tempY+10);
+            text(this.weatherData.main.temp + "°", this.weatherLoc.tempX + 40, this.weatherLoc.tempY + 10);
             fill(255);
             textSize(12);
             textStyle(BOLD);
-            fill(255,255,0)
+            fill(255, 255, 0)
             text('C', this.weatherLoc.tempX + 110, this.weatherLoc.tempY + 5);
 
             textStyle(NORMAL);
@@ -75,54 +236,206 @@
 
 
         }
-        displayClock(){}
-        displayTwitter(){}
-        displayHealthKit(){}
+
+        displayClock() {
+            textSize(30);
+            text(`${hour()}:${minute()}`, this.clockLoc.tempX, this.clockLoc.tempY);
+
+            fill(255);
+            textSize(12);
+            text(`${this.today}, ${this.monthInText[month() - 1]}, ${year()} `, this.clockLoc.tempX - 20, this.clockLoc.tempY + 20);
+
+        }
+        displayGoogleEvents(){
+
+            if(this.eventList !=null && this.eventList.length >0){
+                textSize(14);
+                text(`Upcomming Events`, this.googleEventLoc.tempX, this.googleEventLoc.tempY -30);
+                fill(255);
+                this.eventList.forEach((evt,i)=>{
+                    textSize(12);
+                    text(`${evt} `, this.googleEventLoc.tempX, this.googleEventLoc.tempY+i*15);
+                    fill(255);
+                })
+            }
+
+        }
+        displayTwitter() {
+            if (this.twitterData.length > 0) {
+                this.twitterData.forEach((tweet, index) => {
+                    image(tweet.imgUrl, this.twitterLoc.tempX + 10, this.twitterLoc.tempY + index * 60, 50, 50);
+                    text(tweet.text, this.twitterLoc.tempX + 70, this.twitterLoc.tempY + index * 60, this.twitterLoc.w, this.twitterLoc.h);
+                })
+            }
+        }
+
+        displayHealthKit() {
+        }
     }
 
-    var WEBCAM, CANVAS, CURRENTPROFILE, counter = 0, isDraggable = false, btnMove, dragging = false;
+    var WEBCAM, CANVAS, CURRENTPROFILE, counter = 0, isDraggable = false, btnMove, dragging = false, btnBrighness,
+        slider, sliderVisible = false;
     const params = {
-      vinhProfile:{
-          name: "Vinh T. Nguyen",
-          weatherLoc:{
-              x:150,
-              y:30,
-              tempX:150,
-              tempY:30,
-              w:150,
-              h:100,
-          },
-          clockLoc:{
-              x:window.innerWidth/2,
-              y:30,
-              w:150,
-              h:100,
-          },
-          twitterLoc:{
-              x:10,
-              y:30,
-              w:150,
-              h:600,
-          },
-          healthLoc:{
-              x:10,
-              y:window.innerHeight - 100,
-              w:150,
-              h:50,
-          },
-          welcomeLoc:{
-              x:window.innerWidth - 200,
-              y:30,
-              w:150,
-              h:100,
-          },
-          googleAPIkey:"AIzaSyCtJzTr3KTtbMPC3Aa9uCOOsKnw5Zw44rg",
-          googleclientId: '470126462623-4fuglh8aupd7q6i815vs60q3u6ebl7rj.apps.googleusercontent.com',
-          googlediscoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
-          googlescope: "https://www.googleapis.com/auth/calendar.readonly"
-      },
-      huyenProfile:{},
-      linhProfile:{}
+        vinhProfile: {
+            name: "Vinh T. Nguyen",
+            twitterSpec: {
+                account:  "VinhTTU",
+                limit: 4,
+            },
+
+            weatherLoc: {
+                x: 150,
+                y: 30,
+                tempX: 150,
+                tempY: 30,
+                w: 150,
+                h: 100,
+                color: '#FFF'
+            },
+            clockLoc: {
+                x: window.innerWidth / 2,
+                y: 30,
+                w: 200,
+                h: 200,
+                tempX: window.innerWidth / 2,
+                tempY: 30,
+                color: '#FFF'
+            },
+            twitterLoc: {
+                x: 10,
+                y: 150,
+                w: 250,
+                h: 350,
+                tempX: 10,
+                tempY: 150,
+                color: '#FFF'
+            },
+            healthLoc: {
+                x: 10,
+                y: window.innerHeight - 100,
+                w: 150,
+                h: 50,
+            },
+            welcomeLoc: {
+                x: window.innerWidth - 200,
+                y: 30,
+                w: 150,
+                h: 100,
+            },
+            googleEventLoc:{
+                x: window.innerWidth - 300,
+                y: 150,
+                tempX: window.innerWidth - 300,
+                tempY: 150,
+                w: 200,
+                h: 400,
+                color: '#FFF'
+            },
+            googleAPIkey: "AIzaSyCtJzTr3KTtbMPC3Aa9uCOOsKnw5Zw44rg",
+            googleclientId: '470126462623-4fuglh8aupd7q6i815vs60q3u6ebl7rj.apps.googleusercontent.com',
+            googlediscoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
+            googlescope: "https://www.googleapis.com/auth/calendar.readonly"
+        },
+        huyenProfile: {
+            name: "Huyen Nguyen",
+            twitterSpec: {
+                account:  "huyendoesstuff",
+                limit: 8,
+            },
+            weatherLoc: {
+                x: 950,
+                y: 400,
+                tempX: 3 * window.innerWidth / 4,
+                tempY: 40,
+                w: 150,
+                h: 100,
+                color: '#f4a9dc'
+            },
+            clockLoc: {
+                x: window.innerWidth / 2,
+                y: 30,
+                w: 200,
+                h: 200,
+                tempX: window.innerWidth / 4,
+                tempY: 50,
+                color: '#FFF'
+            },
+            twitterLoc: {
+                x: 10,
+                y: 150,
+                w: 250,
+                h: 350,
+                tempX: window.innerWidth - 400,
+                tempY: 150,
+                color: '#FFF'
+            },
+            healthLoc: {
+                x: 10,
+                y: window.innerHeight - 200,
+                w: 150,
+                h: 50,
+            },
+            welcomeLoc: {
+                x: window.innerWidth - 400,
+                y: 30,
+                w: 150,
+                h: 100,
+            },
+            googleAPIkey: "AIzaSyCR8FuCOVFEMRdr-ain13oH_VX69qcbvaI",
+            googleclientId: '470126462623-4fuglh8aupd7q6i815vs60q3u6ebl7rj.apps.googleusercontent.com',
+            googlediscoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
+            googlescope: "https://www.googleapis.com/auth/calendar.readonly"
+        },
+        linhProfile: {
+            name: "Linh Ho Manh",
+            twitterSpec: {
+                account:  "linhhomanh",
+                limit: 4,
+            },
+            weatherLoc: {
+                x: 150,
+                y: 30,
+                tempX: 150,
+                tempY: window.innerHeight,
+                w: 150,
+                h: 100,
+                color: '#FFF'
+            },
+            clockLoc: {
+                x: window.innerWidth / 2,
+                y: 30,
+                w: 200,
+                h: 200,
+                tempX: window.innerWidth / 2,
+                tempY: window.innerHeight - 100,
+                color: '#FFF'
+            },
+            twitterLoc: {
+                x: 10,
+                y: 150,
+                w: 250,
+                h: 350,
+                tempX: 10,
+                tempY: 550,
+                color: '#FFF'
+            },
+            healthLoc: {
+                x: 10,
+                y: window.innerHeight - 100,
+                w: 150,
+                h: 50,
+            },
+            welcomeLoc: {
+                x: window.innerWidth - 200,
+                y: 30,
+                w: 150,
+                h: 100,
+            },
+            googleAPIkey: "AIzaSyCtJzTr3KTtbMPC3Aa9uCOOsKnw5Zw44rg",
+            googleclientId: '470126462623-4fuglh8aupd7q6i815vs60q3u6ebl7rj.apps.googleusercontent.com',
+            googlediscoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
+            googlescope: "https://www.googleapis.com/auth/calendar.readonly"
+        }
     };
 
     /**
@@ -136,8 +449,19 @@
     function setup() {
         CANVAS = createCanvas(windowWidth, windowHeight);
         btnMove = createButton('Done');
-        btnMove.position(width-50,  19);
-        btnMove.hide()
+        btnMove.position(width - 50, 19);
+        btnMove.mousePressed(btnMoveMousePressed)
+        btnMove.hide();
+        btnBrighness = createButton('Brighness')
+        btnBrighness.position(19, height - 60)
+        btnBrighness.style("background-color", "#000");
+        btnBrighness.style("color", "#fff");
+        btnBrighness.size(100, 40)
+        btnBrighness.mousePressed(btnBrighnessMousePressed)
+        slider = createSlider(0, 255, 200);
+        slider.position(19, height - 90);
+        slider.style('width', '100px');
+        slider.hide()
         WEBCAM = createCapture(VIDEO);
         WEBCAM.id('inputVideo')
         WEBCAM.loop();
@@ -145,18 +469,27 @@
         CANVAS.position(0, 0);
 
     }
+
     function draw() {
+        let val = slider.value();
+        tint(val); // Display at half opacity
         image(WEBCAM, 0, 0, width, height);
-        if(mouseIsPressed){
+        if (mouseIsPressed) {
             counter++
         }
-        if(counter > 120){
-            isDraggable = true ;
+        if (counter > 120) {
+            isDraggable = true;
 
             btnMove.show()
 
         }
-        if(CURRENTPROFILE.isReady){
+        if (CURRENTPROFILE.isReady) {
+            if (isDraggable && !dragging) {
+                CURRENTPROFILE.shakenWeatherBox();
+                CURRENTPROFILE.shakenTwitterBox();
+                CURRENTPROFILE.shakenClockBox();
+                CURRENTPROFILE.shakenGoogleEventBox();
+            }
             CURRENTPROFILE.showData()
         }
     }
@@ -165,13 +498,37 @@
      * Interaction control section and parameters
      * @param event
      */
+    function btnBrighnessMousePressed() {
+
+        sliderVisible = !sliderVisible;
+        sliderVisible === true ? slider.show() : slider.hide()
+        let c = sliderVisible === true ? "#00f" : "#000";
+        btnBrighness.style("background-color", c);
+        btnBrighness.style("color", "#fff");
+    }
+
     function mouseDragged(event) {
         cursor(MOVE);
-        if(isDraggable){
-                if(CURRENTPROFILE.weatherLoc.active===true){
-                    CURRENTPROFILE.weatherLoc.tempX = mouseX;
-                    CURRENTPROFILE.weatherLoc.tempY = mouseY;
-                }
+        if (isDraggable) {
+            if (CURRENTPROFILE.weatherLoc.active === true) {
+                CURRENTPROFILE.weatherLoc.tempX = mouseX;
+                CURRENTPROFILE.weatherLoc.tempY = mouseY;
+            }
+
+            if (CURRENTPROFILE.twitterLoc.active === true) {
+                CURRENTPROFILE.twitterLoc.tempX = mouseX;
+                CURRENTPROFILE.twitterLoc.tempY = mouseY;
+            }
+
+            if (CURRENTPROFILE.clockLoc.active === true) {
+                CURRENTPROFILE.clockLoc.tempX = mouseX;
+                CURRENTPROFILE.clockLoc.tempY = mouseY;
+            }
+
+            if (CURRENTPROFILE.googleEventLoc.active === true) {
+                CURRENTPROFILE.googleEventLoc.tempX = mouseX;
+                CURRENTPROFILE.googleEventLoc.tempY = mouseY;
+            }
             return false;
         }
     }
@@ -179,26 +536,71 @@
     function mousePressed() {
         cursor(MOVE);
         dragging = true;
-        if(isDraggable){
+        if (isDraggable) {
             // Check if weatherbox is clicked
+            if (mouseX > CURRENTPROFILE.weatherLoc.tempX && mouseX < CURRENTPROFILE.weatherLoc.tempX + CURRENTPROFILE.weatherLoc.w && mouseY > CURRENTPROFILE.weatherLoc.tempY && mouseY < CURRENTPROFILE.weatherLoc.tempY + CURRENTPROFILE.weatherLoc.h) {
+                CURRENTPROFILE.weatherLoc.active = true;
+                CURRENTPROFILE.weatherLoc.color = '#f00'
+            } else {
+                CURRENTPROFILE.weatherLoc.x = CURRENTPROFILE.weatherLoc.tempX;
+                CURRENTPROFILE.weatherLoc.y = CURRENTPROFILE.weatherLoc.tempY;
+                CURRENTPROFILE.weatherLoc.active = false;
+                CURRENTPROFILE.weatherLoc.color = 'blue'
+            }
 
+            if (mouseX > CURRENTPROFILE.twitterLoc.tempX && mouseX < CURRENTPROFILE.twitterLoc.tempX + CURRENTPROFILE.twitterLoc.w && mouseY > CURRENTPROFILE.twitterLoc.tempY && mouseY < CURRENTPROFILE.twitterLoc.tempY + CURRENTPROFILE.twitterLoc.h) {
+                CURRENTPROFILE.twitterLoc.active = true;
+                CURRENTPROFILE.twitterLoc.color = '#f00'
+            } else {
+                CURRENTPROFILE.twitterLoc.x = CURRENTPROFILE.twitterLoc.tempX;
+                CURRENTPROFILE.twitterLoc.y = CURRENTPROFILE.twitterLoc.tempY;
+                CURRENTPROFILE.twitterLoc.active = false;
+                CURRENTPROFILE.twitterLoc.color = 'blue'
+            }
 
-                if (mouseX > CURRENTPROFILE.weatherLoc.tempX && mouseX < CURRENTPROFILE.weatherLoc.tempX + CURRENTPROFILE.weatherLoc.w && mouseY > CURRENTPROFILE.weatherLoc.tempY && mouseY < CURRENTPROFILE.weatherLoc.tempY + CURRENTPROFILE.weatherLoc.h){
-                    CURRENTPROFILE.weatherLoc.active = true;
-                    CURRENTPROFILE.weatherLoc.color ='#f00'
-                }else{
-                    CURRENTPROFILE.weatherLoc.active = false;
-                    CURRENTPROFILE.weatherLoc.color ='blue'
-                }
+            if (mouseX > CURRENTPROFILE.clockLoc.tempX && mouseX < CURRENTPROFILE.clockLoc.tempX + CURRENTPROFILE.clockLoc.w && mouseY > CURRENTPROFILE.clockLoc.tempY && mouseY < CURRENTPROFILE.clockLoc.tempY + CURRENTPROFILE.clockLoc.h) {
+                CURRENTPROFILE.clockLoc.active = true;
+                CURRENTPROFILE.clockLoc.color = '#f00'
+            } else {
+                CURRENTPROFILE.clockLoc.x = CURRENTPROFILE.clockLoc.tempX;
+                CURRENTPROFILE.clockLoc.y = CURRENTPROFILE.clockLoc.tempY;
+                CURRENTPROFILE.clockLoc.active = false;
+                CURRENTPROFILE.clockLoc.color = 'blue'
+            }
+
+            if (mouseX > CURRENTPROFILE.googleEventLoc.tempX && mouseX < CURRENTPROFILE.googleEventLoc.tempX + CURRENTPROFILE.googleEventLoc.w && mouseY > CURRENTPROFILE.googleEventLoc.tempY && mouseY < CURRENTPROFILE.googleEventLoc.tempY + CURRENTPROFILE.googleEventLoc.h) {
+                CURRENTPROFILE.googleEventLoc.active = true;
+                CURRENTPROFILE.googleEventLoc.color = '#f00'
+            } else {
+                CURRENTPROFILE.googleEventLoc.x = CURRENTPROFILE.googleEventLoc.tempX;
+                CURRENTPROFILE.googleEventLoc.y = CURRENTPROFILE.googleEventLoc.tempY;
+                CURRENTPROFILE.googleEventLoc.active = false;
+                CURRENTPROFILE.googleEventLoc.color = 'blue'
+            }
             return false;
         }
     }
 
     function mouseReleased() {
-        counter =0;
+        counter = 0;
         cursor(ARROW);
         dragging = false;
+        CURRENTPROFILE.weatherLoc.x = CURRENTPROFILE.weatherLoc.tempX;
+        CURRENTPROFILE.weatherLoc.y = CURRENTPROFILE.weatherLoc.tempY;
+
+        CURRENTPROFILE.twitterLoc.x = CURRENTPROFILE.twitterLoc.tempX;
+        CURRENTPROFILE.twitterLoc.y = CURRENTPROFILE.twitterLoc.tempY;
+
+        CURRENTPROFILE.clockLoc.x = CURRENTPROFILE.clockLoc.tempX;
+        CURRENTPROFILE.clockLoc.y = CURRENTPROFILE.clockLoc.tempY;
+
+        CURRENTPROFILE.googleEventLoc.x = CURRENTPROFILE.googleEventLoc.tempX;
+        CURRENTPROFILE.googleEventLoc.y = CURRENTPROFILE.googleEventLoc.tempY;
     }
 
+    function btnMoveMousePressed() {
+        isDraggable = false;
+        btnMove.hide()
+    }
 </script>
 </html>

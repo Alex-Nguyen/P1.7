@@ -16,14 +16,14 @@
     <script>
         // Your web app's Firebase configuration
         var firebaseConfig = {
-            apiKey: "AIzaSyCeFJpmiOFaStW7l-LzKW08ADjHEJtcQ-E",
-            authDomain: "healthkitfirebase.firebaseapp.com",
-            databaseURL: "https://healthkitfirebase.firebaseio.com",
-            projectId: "healthkitfirebase",
-            storageBucket: "healthkitfirebase.appspot.com",
-            messagingSenderId: "189248516188",
-            appId: "1:189248516188:web:f7962b4204ec3f84b17699",
-            measurementId: "G-PXCL7HQGJW"
+            apiKey: "AIzaSyAa6_EenZKfzVFOqiWTB3qNFrQNqY6UlpE",
+            authDomain: "healthkitforclass.firebaseapp.com",
+            databaseURL: "https://healthkitforclass.firebaseio.com",
+            projectId: "healthkitforclass",
+            storageBucket: "healthkitforclass.appspot.com",
+            messagingSenderId: "10115099027",
+            appId: "1:10115099027:web:f32cb07dd50e089a92a066",
+            measurementId: "G-Y1B923BPE2"
         };
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
@@ -72,24 +72,22 @@
         #defaultCanvas0{
             z-index: -2;
         }
-        body{
-            overflow: hidden;
-        }
     </style>
     <script src="libs/underscore-min.js"></script>
     <script src="libs/backbone-min.js"></script>
     <script src="libs/createjs.min.js"></script>
 </head>
-<body >
+<body>
+
 <div id="LogInOut">
     <button id="authorize_button" style="display: none">Authorize</button>
     <button id="signout_button" style="display: none">Sign Out</button>
 </div>
 
-<!--    <a id="twitter" transparent class="twitter-timeline" data-width="200" noheader nofooter-->
-<!--       data-height="300" data-tweet-limit="3" href="https://twitter.com/VinhTTU"/>-->
+<a id="twitter" transparent class="twitter-timeline" data-width="200" noheader nofooter
+   data-height="300" data-tweet-limit="3" href="https://twitter.com/VinhTTU"/>
 
-<div id="timeline" style="display: none"></div>
+
 <pre id="content" style="white-space: pre-wrap;"></pre>
 </body>
 <script>
@@ -237,29 +235,7 @@
     })
 
 </script>
-<script src="js/app.js"></script>
+<script src="js/app-general.js"></script>
 <script src="https://platform.twitter.com/widgets.js"></script>
-<script>
-    twttr.widgets.createTimeline(
-        {
-            sourceType: 'profile',
-            screenName: 'VinhTTU',
 
-        },
-        document.getElementById('timeline'),
-        {
-            width: '150',
-            height: '700',
-            tweetLimit:5
-        }).then(function (el) {
-        var tweets = el.contentWindow.document.getElementsByClassName('timeline-TweetList-tweet customisable-border')
-        console.log(tweets)
-        for (let item of tweets) {
-            let avatar = item.getElementsByClassName('Avatar')[0].getAttribute('data-src-2x')
-            console.log(avatar)
-        }
-    });
-
-
-</script>
 </html>
