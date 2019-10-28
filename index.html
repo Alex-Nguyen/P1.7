@@ -109,6 +109,7 @@
                     'maxResults': 10,
                     'orderBy': 'startTime'
                 }).then(function(response) {
+                    _this.name = response.result.summary;
                     var events = response.result.items;
                     if (events.length > 0) {
                         for (let i = 0; i < events.length; i++) {
@@ -192,16 +193,14 @@
             })
         }
         loadYouTubeVideo(){
-            var vid = createVideo(
-                ['videos/mov_bbb.mp4'],
-                function () {
-                    vid.loop();
-                    vid.volume(10);
-                }
-            );
-            vid.style("z-index",100)
-            vid.size(200, 150);
-            vid.position(window.innerWidth - 250, window.innerHeight - 180)
+           var video = createVideo(['videos/mov_bbb.mp4'], function () {
+               video.play()
+               video.volume(0.8);
+               video.style("z-index",100)
+               video.size(200, 150);
+               video.position(window.innerWidth - 250, window.innerHeight - 180)
+           });
+
         }
         shakenWeatherBox() {
             this.weatherLoc.tempX = this.weatherLoc.x + random(-1, 1)
@@ -284,7 +283,7 @@
 
         }
         displayGoogleEvents(){
-
+            text(`Hello: ${this.name} `,this.welcomeLoc.x, this.welcomeLoc.y);
             if(this.eventList !=null && this.eventList.length >0){
                 textSize(14);
                 text(`Upcomming Events`, this.googleEventLoc.tempX, this.googleEventLoc.tempY -30);
@@ -370,11 +369,11 @@
                 color: '#FFF'
             },
             healthStepLoc: {
-                x: 10,
+                x: 400,
                 y: window.innerHeight - 100,
                 w: 300,
                 h: 100,
-                tempX:10,
+                tempX:400,
                 tempY: window.innerHeight - 100,
             },
             welcomeLoc: {
@@ -509,7 +508,7 @@
 
     function setup() {
         CANVAS = createCanvas(windowWidth, windowHeight);
-        CANVAS.style("z-index",-10)
+        CANVAS.style("z-index",-1)
         btnMove = createButton('Done');
         btnMove.position(width - 50, 19);
         btnMove.mousePressed(btnMoveMousePressed)
