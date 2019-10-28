@@ -31,7 +31,8 @@
             this.apiKey = params.googleAPIkey;
             this.clientId = params.googleclientId;
             this.discoveryDocs = params.googlediscoveryDocs;
-            this.scope = params.googlescope
+            this.scope = params.googlescope;
+            this.twAccount = params.twAccount;
             this.isReady = false;
             this.twitterData = [];
             this.loadWeatherData = this.loadWeatherData.bind(this)
@@ -57,7 +58,7 @@
             twttr.widgets.createTimeline(
                 {
                     sourceType: 'profile',
-                    screenName: 'VinhTTU',
+                    screenName: _this.twAccount,
 
                 },
                 document.getElementById('timeline'),
@@ -170,6 +171,7 @@
     const params = {
         vinhProfile: {
             name: "Vinh T. Nguyen",
+            twAccount: "VinhTTU",
             weatherLoc: {
                 x: 150,
                 y: 30,
@@ -216,22 +218,23 @@
         },
         huyenProfile: {
             name: "Huyen Nguyen",
+            twAccount: "huyendoesstuff",
             weatherLoc: {
-                x: 850,
+                x: 950,
                 y: 400,
-                tempX: 150,
-                tempY: 30,
+                tempX: 3 * window.innerWidth / 4,
+                tempY: 40,
                 w: 150,
                 h: 100,
-                color: '#FFF'
+                color: '#f4a9dc'
             },
             clockLoc: {
                 x: window.innerWidth / 2,
                 y: 30,
                 w: 200,
                 h: 200,
-                tempX: window.innerWidth / 2,
-                tempY: 30,
+                tempX: window.innerWidth / 4,
+                tempY: 50,
                 color: '#FFF'
             },
             twitterLoc: {
@@ -239,23 +242,23 @@
                 y: 150,
                 w: 250,
                 h: 350,
-                tempX: 10,
+                tempX: window.innerWidth - 400,
                 tempY: 150,
                 color: '#FFF'
             },
             healthLoc: {
                 x: 10,
-                y: window.innerHeight - 100,
+                y: window.innerHeight - 200,
                 w: 150,
                 h: 50,
             },
             welcomeLoc: {
-                x: window.innerWidth - 200,
+                x: window.innerWidth - 400,
                 y: 30,
                 w: 150,
                 h: 100,
             },
-            googleAPIkey: "AIzaSyCtJzTr3KTtbMPC3Aa9uCOOsKnw5Zw44rg",
+            googleAPIkey: "AIzaSyCR8FuCOVFEMRdr-ain13oH_VX69qcbvaI",
             googleclientId: '470126462623-4fuglh8aupd7q6i815vs60q3u6ebl7rj.apps.googleusercontent.com',
             googlediscoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"],
             googlescope: "https://www.googleapis.com/auth/calendar.readonly"
@@ -267,7 +270,7 @@
      * Setup control and parameters
      */
     function preload() {
-        CURRENTPROFILE = new Profile(params.vinhProfile)
+        CURRENTPROFILE = new Profile(params.huyenProfile)
         CURRENTPROFILE.init()
     }
 
