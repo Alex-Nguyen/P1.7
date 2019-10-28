@@ -67,6 +67,14 @@
         }
         loadGoogleEvent(){
             let _this = this;
+            _this.btnAuthorizationSignIn = createButton('Sign in');
+            _this.btnAuthorizationSignIn.position(this.welcomeLoc.x + 120, this.welcomeLoc.y-15)
+
+            _this.btnAuthorizationSignIn.hide()
+            _this.btnAuthorizationSignOut = createButton('Sign out');
+
+            _this.btnAuthorizationSignOut.position(this.welcomeLoc.x + 120, this.welcomeLoc.y-15)
+            _this.btnAuthorizationSignOut.hide()
             jQuery.loadScript = function (url, callback) {
                 jQuery.ajax({
                     url: url,
@@ -83,16 +91,13 @@
                         discoveryDocs: _this.discoveryDocs,
                         scope: _this.scope
                     }).then(function () {
-                        // Listen for sign-in state changes.
-                        console.log("Successfull")
-                        // let authorizeButton = document.getElementById('authorize_button');
-                        // let signoutButton = document.getElementById('signout_button');
+
                          gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
                         //
                         // // Handle the initial sign-in state.
                         updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
-                        // authorizeButton.onclick = handleAuthClick;
-                        // signoutButton.onclick = handleSignoutClick;
+                        _this.btnAuthorizationSignIn.mousePressed(handleAuthClick);
+                        _this.btnAuthorizationSignOut.mousePressed(handleSignoutClick)
                     }, function(error) {
                         appendPre(JSON.stringify(error, null, 2));
                     });
@@ -127,25 +132,23 @@
             }
             function handleSignoutClick(event) {
                 gapi.auth2.getAuthInstance().signOut();
-                let step = document.getElementById('step')
-                step.style.display = 'none'
-                let sleep = document.getElementById('sleep')
-                sleep.style.display = 'none'
-                let twitter = document.getElementById('twitter-widget-0');
-                if(twitter) twitter.style.display = 'none';
-                currentProfile = null;
+                _this.name ="Anonymous"
             }
             function updateSigninStatus(isSignedIn) {
-                listUpcomingEvents();
+                if(isSignedIn){
+                    _this.btnAuthorizationSignOut.show();
+                    _this.btnAuthorizationSignIn.hide()
+                    listUpcomingEvents();
+                }else{
+                    _this.btnAuthorizationSignIn.show();
+                    _this.btnAuthorizationSignOut.hide()
+                }
+
             }
             function handleAuthClick(event) {
-                let step = document.getElementById('step')
-                step.style.display = 'inline'
-                let sleep = document.getElementById('sleep')
-                sleep.style.display = 'inline'
-                let twitter = document.getElementById('twitter-widget-0');
-                if(twitter) twitter.style.display = 'inline';
                 gapi.auth2.getAuthInstance().signIn();
+                _this.btnAuthorizationSignOut.show();
+                _this.btnAuthorizationSignIn.hide()
 
             }
         }
@@ -283,7 +286,9 @@
 
         }
         displayGoogleEvents(){
-            text(`Hello: ${this.name} `,this.welcomeLoc.x, this.welcomeLoc.y);
+            text(`Hello: ${this.name} `,this.welcomeLoc.x-30, this.welcomeLoc.y);
+
+
             if(this.eventList !=null && this.eventList.length >0){
                 textSize(14);
                 text(`Upcomming Events`, this.googleEventLoc.tempX, this.googleEventLoc.tempY -30);
