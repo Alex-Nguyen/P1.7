@@ -32,7 +32,8 @@
             this.clientId = params.googleclientId;
             this.discoveryDocs = params.googlediscoveryDocs;
             this.scope = params.googlescope;
-            this.twAccount = params.twAccount;
+            this.twAccount = params.twitterSpec.account;
+            this.twLimit = params.twitterSpec.limit;
             this.isReady = false;
             this.twitterData = [];
             this.loadWeatherData = this.loadWeatherData.bind(this)
@@ -65,10 +66,13 @@
                 {
                     width: '150',
                     height: '700',
-                    tweetLimit: 4
+                    tweetLimit: _this.twLimit,
                 }).then(function (el) {
                 var tweets = el.contentWindow.document.getElementsByClassName('timeline-TweetList-tweet customisable-border')
-
+                _this.twitterData.push({
+                    imgUrl: loadImage(tweets[0].getElementsByClassName('Avatar')[0].getAttribute('data-src-2x')),
+                    text: "@" + _this.twAccount
+                })
                 for (let item of tweets) {
                     let avatar = item.getElementsByClassName('Avatar')[0].getAttribute('data-src-2x');
                     let avatarImg = loadImage(avatar);
@@ -171,7 +175,11 @@
     const params = {
         vinhProfile: {
             name: "Vinh T. Nguyen",
-            twAccount: "VinhTTU",
+            twitterSpec: {
+                account:  "VinhTTU",
+                limit: 4,
+            },
+
             weatherLoc: {
                 x: 150,
                 y: 30,
@@ -218,7 +226,10 @@
         },
         huyenProfile: {
             name: "Huyen Nguyen",
-            twAccount: "huyendoesstuff",
+            twitterSpec: {
+                account:  "huyendoesstuff",
+                limit: 8,
+            },
             weatherLoc: {
                 x: 950,
                 y: 400,
@@ -265,7 +276,10 @@
         },
         linhProfile: {
             name: "Linh Ho Manh",
-            twAccount: "linhhomanh",
+            twitterSpec: {
+                account:  "linhhomanh",
+                limit: 4,
+            },
             weatherLoc: {
                 x: 150,
                 y: 30,
