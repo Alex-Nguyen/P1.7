@@ -7,7 +7,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://platform.twitter.com/widgets.js"></script>
-
+    <script src="https://d3js.org/d3.v3.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-analytics.js"></script>
@@ -23,10 +23,11 @@
     class Profile {
         constructor(params) {
             this.name = params.name;
+            this.firebaseConfig = params.firebaseConfig;
             this.weatherLoc = params.weatherLoc;
             this.clockLoc = params.clockLoc;
             this.twitterLoc = params.twitterLoc;
-            this.healthLoc = params.healthLoc;
+            this.healthStepLoc = params.healthStepLoc;
             this.welcomeLoc = params.welcomeLoc;
             this.googleEventLoc = params.googleEventLoc;
             this.apiKey = params.googleAPIkey;
@@ -37,9 +38,11 @@
             this.twLimit = params.twitterSpec.limit;
             this.isReady = false;
             this.twitterData = [];
+            this.healthkitStepData =[];
             this.loadWeatherData = this.loadWeatherData.bind(this)
             this.loadTwitterData = this.loadTwitterData.bind(this)
             this.loadGoogleEvent = this.loadGoogleEvent.bind(this)
+            this.loadHealthKitData = this.loadHealthKitData.bind(this)
 
         }
 
@@ -49,6 +52,9 @@
             this.loadTwitterData();
             this.loadClockData();
             this.loadGoogleEvent();
+            this.loadHealthKitData();
+            this.loadYouTubeVideo()
+
         }
 
         showData() {
@@ -56,6 +62,8 @@
             this.displayTwitter();
             this.displayClock();
             this.displayGoogleEvents();
+            this.displayHealthKit();
+            // this.displayYouTubeVideo();
         }
         loadGoogleEvent(){
             let _this = this;
@@ -138,7 +146,6 @@
                 if(twitter) twitter.style.display = 'inline';
                 gapi.auth2.getAuthInstance().signIn();
 
-                currentProfile = that;
             }
         }
         loadTwitterData() {
@@ -170,7 +177,32 @@
 
             });
         }
+        loadHealthKitData(){
+            let _this = this;
+            firebase.initializeApp(this.firebaseConfig);
+            firebase.analytics();
 
+            let	parseDate = d3.time.format("%d-%b-%Y").parse;
+            let rootNode = firebase.database().ref()
+            let vinhSteps = rootNode.child("stepCount");
+            vinhSteps.once("value",function (stepCount) {
+                stepCount.forEach(item=>{
+                    _this.healthkitStepData.push({date:parseDate(item.key), value:+item.val()})
+                });
+            })
+        }
+        loadYouTubeVideo(){
+            var vid = createVideo(
+                ['videos/mov_bbb.mp4'],
+                function () {
+                    vid.loop();
+                    vid.volume(10);
+                }
+            );
+            vid.style("z-index",100)
+            vid.size(200, 150);
+            vid.position(window.innerWidth - 250, window.innerHeight - 180)
+        }
         shakenWeatherBox() {
             this.weatherLoc.tempX = this.weatherLoc.x + random(-1, 1)
             this.weatherLoc.tempY = this.weatherLoc.y + random(-1, 1)
@@ -179,6 +211,11 @@
         shakenTwitterBox() {
             this.twitterLoc.tempX = this.twitterLoc.x + random(-1, 1)
             this.twitterLoc.tempY = this.twitterLoc.y + random(-1, 1)
+        }
+
+        shakenHealthStepBox(){
+            this.healthStepLoc.tempX = this.healthStepLoc.x + random(-1, 1)
+            this.healthStepLoc.tempY = this.healthStepLoc.y + random(-1, 1)
         }
         shakenGoogleEventBox(){
             this.googleEventLoc.tempX = this.googleEventLoc.x + random(-1, 1)
@@ -268,15 +305,37 @@
                 })
             }
         }
+        displayYouTubeVideo(){
 
+        }
         displayHealthKit() {
+            if(this.healthkitStepData.length > 0){
+                this.healthkitStepData.forEach((evt,i)=>{
+                    textSize(12);
+                    rect(this.healthStepLoc.tempX + (i*15), this.healthStepLoc.tempY - evt.value/100, 10, evt.value/100)
+                    fill(255);
+                    text("Step Counts", this.healthStepLoc.tempX, this.healthStepLoc.tempY + 20)
+                })
+            }
+
         }
     }
 
     var WEBCAM, CANVAS, CURRENTPROFILE, counter = 0, isDraggable = false, btnMove, dragging = false, btnBrighness,
         slider, sliderVisible = false;
     const params = {
+
         vinhProfile: {
+            firebaseConfig: {
+                apiKey: "AIzaSyCeFJpmiOFaStW7l-LzKW08ADjHEJtcQ-E",
+                authDomain: "healthkitfirebase.firebaseapp.com",
+                databaseURL: "https://healthkitfirebase.firebaseio.com",
+                projectId: "healthkitfirebase",
+                storageBucket: "healthkitfirebase.appspot.com",
+                messagingSenderId: "189248516188",
+                appId: "1:189248516188:web:f7962b4204ec3f84b17699",
+                measurementId: "G-PXCL7HQGJW"
+            },
             name: "Vinh T. Nguyen",
             twitterSpec: {
                 account:  "VinhTTU",
@@ -310,11 +369,13 @@
                 tempY: 150,
                 color: '#FFF'
             },
-            healthLoc: {
+            healthStepLoc: {
                 x: 10,
                 y: window.innerHeight - 100,
-                w: 150,
-                h: 50,
+                w: 300,
+                h: 100,
+                tempX:10,
+                tempY: window.innerHeight - 100,
             },
             welcomeLoc: {
                 x: window.innerWidth - 200,
@@ -448,6 +509,7 @@
 
     function setup() {
         CANVAS = createCanvas(windowWidth, windowHeight);
+        CANVAS.style("z-index",-10)
         btnMove = createButton('Done');
         btnMove.position(width - 50, 19);
         btnMove.mousePressed(btnMoveMousePressed)
@@ -489,6 +551,7 @@
                 CURRENTPROFILE.shakenTwitterBox();
                 CURRENTPROFILE.shakenClockBox();
                 CURRENTPROFILE.shakenGoogleEventBox();
+                CURRENTPROFILE.shakenHealthStepBox();
             }
             CURRENTPROFILE.showData()
         }
@@ -528,6 +591,11 @@
             if (CURRENTPROFILE.googleEventLoc.active === true) {
                 CURRENTPROFILE.googleEventLoc.tempX = mouseX;
                 CURRENTPROFILE.googleEventLoc.tempY = mouseY;
+            }
+
+            if (CURRENTPROFILE.healthStepLoc.active === true) {
+                CURRENTPROFILE.healthStepLoc.tempX = mouseX;
+                CURRENTPROFILE.healthStepLoc.tempY = mouseY;
             }
             return false;
         }
@@ -577,6 +645,16 @@
                 CURRENTPROFILE.googleEventLoc.active = false;
                 CURRENTPROFILE.googleEventLoc.color = 'blue'
             }
+
+            if (mouseX > CURRENTPROFILE.healthStepLoc.tempX && mouseX < CURRENTPROFILE.healthStepLoc.tempX + CURRENTPROFILE.healthStepLoc.w && mouseY > CURRENTPROFILE.healthStepLoc.tempY && mouseY < CURRENTPROFILE.healthStepLoc.tempY + CURRENTPROFILE.healthStepLoc.h) {
+                CURRENTPROFILE.healthStepLoc.active = true;
+                CURRENTPROFILE.healthStepLoc.color = '#f00'
+            } else {
+                CURRENTPROFILE.healthStepLoc.x = CURRENTPROFILE.healthStepLoc.tempX;
+                CURRENTPROFILE.healthStepLoc.y = CURRENTPROFILE.healthStepLoc.tempY;
+                CURRENTPROFILE.healthStepLoc.active = false;
+                CURRENTPROFILE.healthStepLoc.color = 'blue'
+            }
             return false;
         }
     }
@@ -596,6 +674,9 @@
 
         CURRENTPROFILE.googleEventLoc.x = CURRENTPROFILE.googleEventLoc.tempX;
         CURRENTPROFILE.googleEventLoc.y = CURRENTPROFILE.googleEventLoc.tempY;
+
+        CURRENTPROFILE.healthStepLoc.x = CURRENTPROFILE.healthStepLoc.tempX;
+        CURRENTPROFILE.healthStepLoc.y = CURRENTPROFILE.healthStepLoc.tempY;
     }
 
     function btnMoveMousePressed() {
