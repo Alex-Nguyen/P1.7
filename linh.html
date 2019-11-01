@@ -6,7 +6,63 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-analytics.js"></script>
+    <script src="libs/face-api.js" ></script>
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+
+    <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyCeFJpmiOFaStW7l-LzKW08ADjHEJtcQ-E",
+            authDomain: "healthkitfirebase.firebaseapp.com",
+            databaseURL: "https://healthkitfirebase.firebaseio.com",
+            projectId: "healthkitfirebase",
+            storageBucket: "healthkitfirebase.appspot.com",
+            messagingSenderId: "189248516188",
+            appId: "1:189248516188:web:f7962b4204ec3f84b17699",
+            measurementId: "G-PXCL7HQGJW"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        firebase.analytics();
+    </script>
     <style>
+        svg #step{
+            position: absolute;
+            bottom: -10;
+            left: 250px;
+        }
+        svg #sleep{
+            position: absolute;
+            bottom: 0;
+            left: 600px;
+        }
+        text{
+            fill: white;
+        }
+
+        .axis {
+            font: 10px sans-serif;
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: #ffffff;
+            shape-rendering: crispEdges;
+        }
+        #LogInOut{
+            position: absolute;
+            top: 5px;
+            right: 5px;
+        }
+        .timeline-Widget{
+            opacity: 0.1%;
+        }
+
         #twitter-widget-0{
             position: absolute;
             top: 0;
@@ -17,53 +73,171 @@
             z-index: -2;
         }
     </style>
-    <!-- The core Firebase JS SDK is always required and must be listed first -->
-    <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-database.js"></script>
-
-    <!-- TODO: Add SDKs for Firebase products that you want to use
-         https://firebase.google.com/docs/web/setup#available-libraries -->
-    <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-analytics.js"></script>
-
-    <script>
-        // Your web app's Firebase configuration
-        var firebaseConfig = {
-            apiKey: "AIzaSyAa6_EenZKfzVFOqiWTB3qNFrQNqY6UlpE",
-            authDomain: "healthkitforclass.firebaseapp.com",
-            databaseURL: "https://healthkitforclass.firebaseio.com",
-            projectId: "healthkitforclass",
-            storageBucket: "healthkitforclass.appspot.com",
-            messagingSenderId: "10115099027",
-            appId: "1:10115099027:web:f32cb07dd50e089a92a066",
-            measurementId: "G-Y1B923BPE2"
-        };
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        firebase.analytics();
-    </script>
+    <script src="libs/underscore-min.js"></script>
+    <script src="libs/backbone-min.js"></script>
+    <script src="libs/createjs.min.js"></script>
 </head>
 <body>
-<!--<a id="twitter" transparent class="twitter-timeline" data-width="150" noheader nofooter-->
-<!--   data-height="150" data-tweet-limit="2" href="https://twitter.com/LinhHoManh"/>-->
-<a id="twitter" class="twitter-timeline" data-width="150" noheader nofooter
-   data-height="150" data-tweet-limit="4"  href="https://twitter.com/LinhHoManh?ref_src=twsrc%5Etfw">Tweets by LinhHoManh</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-<!--<a id="twitter" transparent class="twitter-hashtag-button" data-width="150" noheader nofooter-->
-<!--   data-height="300" data-tweet-limit="2" href="https://twitter.com/LinhHoManh">-->
-<!--    Tweet #TwitterStories</a>-->
-<button id="authorize_button" style="display: none;">Authorize</button>
-<button id="signout_button" style="display: none;">Sign Out</button>
+
+<div id="LogInOut">
+    <button id="authorize_button" style="display: none">Authorize</button>
+    <button id="signout_button" style="display: none">Sign Out</button>
+</div>
+
+<a id="twitter" transparent class="twitter-timeline" data-width="200" noheader nofooter
+   data-height="300" data-tweet-limit="3" href="https://twitter.com/LinhHoManh"/>
+
+
 <pre id="content" style="white-space: pre-wrap;"></pre>
 </body>
-<script src="js/sketch.js"></script>
 <script>
     let rootNode = firebase.database().ref()
-    let vinhSteps = rootNode.child("vinh-steps");
+    let vinhSteps = rootNode.child("linh-stepCounts");
     vinhSteps.once("value",function (wholeTree) {
+        let margin = {top: 20, right: 20, bottom: 70, left: 40},
+            width = 300 - margin.left - margin.right,
+            height = 200 - margin.top - margin.bottom;
+
+// Parse the date / time
+        let	parseDate = d3.time.format("%d-%b-%Y").parse;
+
+        let x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
+
+        let y = d3.scale.linear().range([height, 0]);
+
+        let xAxis = d3.svg.axis()
+            .scale(x)
+            .orient("bottom")
+            .tickFormat(d3.time.format("%d-%m"));
+
+        let yAxis = d3.svg.axis()
+            .scale(y)
+            .orient("left")
+            .ticks(10);
+
+        let svg = d3.select("body").append("svg").attr("id",'step')
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
+        let data = [];
         wholeTree.forEach(item=>{
-            console.log(`Key: ${item.key}, value: ${item.val()}`)
+            data.push({date:parseDate(item.key), value:+item.val()})
+        });
+        data = data.sort(function (a,b) {
+            return a.date - b.date
         })
+        console.log(data)
+        x.domain(data.map(function(d) { return d.date; }));
+        y.domain([0, d3.max(data, function(d) { return d.value; })]);
+
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis)
+            .selectAll("text")
+            .style("text-anchor", "end")
+            .attr('class','text')
+            .attr("dx", "-.8em")
+            .attr("dy", "-.55em")
+            .attr("transform", "rotate(-90)" );
+
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+            .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", ".71em")
+            .style("text-anchor", "end")
+            .text("Step(s)");
+
+        svg.selectAll("bar")
+            .data(data)
+            .enter().append("rect")
+            .style("fill", "steelblue")
+            .style('opacity',0.3)
+            .attr("x", function(d) { return x(d.date); })
+            .attr("width", x.rangeBand())
+            .attr("y", function(d) { return y(d.value); })
+            .attr("height", function(d) { return height - y(d.value); });
     })
-    console.log(vinhSteps)
+
+//     let vinhSleeps = rootNode.child('vinh-sleep');
+//     vinhSleeps.once('value',function (wholeTree) {
+//         let margin = {top: 20, right: 20, bottom: 70, left: 40},
+//             width = 300 - margin.left - margin.right,
+//             height = 200 - margin.top - margin.bottom;
+//
+// // Parse the date / time
+//         let	parseDate = d3.time.format("%d-%b-%Y").parse;
+//
+//         let x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
+//
+//         let y = d3.scale.linear().range([height, 0]);
+//
+//         let xAxis = d3.svg.axis()
+//             .scale(x)
+//             .orient("bottom")
+//             .tickFormat(d3.time.format("%d-%m"));
+//
+//         let yAxis = d3.svg.axis()
+//             .scale(y)
+//             .orient("left")
+//             .ticks(10);
+//
+//         let svg = d3.select("body").append("svg").attr("id",'sleep')
+//             .attr("width", width + margin.left + margin.right)
+//             .attr("height", height + margin.top + margin.bottom)
+//             .append("g")
+//             .attr("transform",
+//                 "translate(" + margin.left + "," + margin.top + ")");
+//         let data = [];
+//         wholeTree.forEach(item=>{
+//             data.push({date:parseDate(item.key), value:+item.val()/(60*60)})
+//         });
+//         data = data.sort(function (a,b) {
+//             return a.date - b.date
+//         })
+//         x.domain(data.map(function(d) { return d.date; }));
+//         y.domain([0, d3.max(data, function(d) { return d.value; })]);
+//
+//         svg.append("g")
+//             .attr("class", "x axis")
+//             .attr("transform", "translate(0," + height + ")")
+//             .call(xAxis)
+//             .selectAll("text")
+//             .style("text-anchor", "end")
+//             .attr('class','text')
+//             .attr("dx", "-.8em")
+//             .attr("dy", "-.55em")
+//             .attr("transform", "rotate(-90)" );
+//
+//         svg.append("g")
+//             .attr("class", "y axis")
+//             .call(yAxis)
+//             .append("text")
+//             .attr("transform", "rotate(-90)")
+//             .attr("y", 6)
+//             .attr("dy", ".71em")
+//             .style("text-anchor", "end")
+//             .text("Sleep(hours)");
+//
+//         svg.selectAll("bar")
+//             .data(data)
+//             .enter().append("rect")
+//             .style("fill", "steelblue")
+//             .style('opacity',0.3)
+//             .attr("x", function(d) { return x(d.date); })
+//             .attr("width", x.rangeBand())
+//             .attr("y", function(d) { return y(d.value); })
+//             .attr("height", function(d) { return height - y(d.value); });
+//     }
+//     )
 
 </script>
+<script src="js/app.js"></script>
+<script src="https://platform.twitter.com/widgets.js"></script>
+
 </html>
