@@ -188,7 +188,7 @@
 
             let	parseDate = d3.time.format("%d-%b-%Y").parse;
             let rootNode = firebase.database().ref()
-            let vinhSteps = rootNode.child("stepCount");
+            let vinhSteps = rootNode.child("huyen-stepCounts");
             vinhSteps.once("value",function (stepCount) {
                 stepCount.forEach(item=>{
                     _this.healthkitStepData.push({date:parseDate(item.key), value:+item.val()})
