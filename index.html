@@ -39,6 +39,8 @@
             this.isReady = false;
             this.twitterData = [];
             this.healthkitStepData =[];
+            this.healthkitSleepData =[];
+            this.healthkitWalkingData =[];
             this.loadWeatherData = this.loadWeatherData.bind(this)
             this.loadTwitterData = this.loadTwitterData.bind(this)
             this.loadGoogleEvent = this.loadGoogleEvent.bind(this)
@@ -188,12 +190,27 @@
 
             let	parseDate = d3.time.format("%d-%b-%Y").parse;
             let rootNode = firebase.database().ref()
-            let vinhSteps = rootNode.child("huyen-stepCounts");
-            vinhSteps.once("value",function (stepCount) {
+            let stepCount = rootNode.child("huyen-stepCounts");
+            let sleep = rootNode.child("huyen-sleep");
+            let walkingDistance = rootNode.child("huyen-walkingDistance");
+
+            stepCount.once("value",function (stepCount) {
                 stepCount.forEach(item=>{
                     _this.healthkitStepData.push({date:parseDate(item.key), value:+item.val()})
                 });
-            })
+            }).then(console.log(_this.healthkitStepData))
+
+            sleep.once("value",function (d) {
+                d.forEach(item=>{
+                    _this.healthkitSleepData.push({date:parseDate(item.key), value:+item.val()})
+                });
+            }).then(console.log(_this.healthkitSleepData))
+
+            walkingDistance.once("value",function (d) {
+                d.forEach(item=>{
+                    _this.healthkitWalkingData.push({date:parseDate(item.key), value:+item.val()})
+                });
+            }).then(console.log(_this.healthkitWalkingData))
         }
         loadYouTubeVideo(){
            var video = createVideo(['videos/mov_bbb.mp4'], function () {
