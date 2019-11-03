@@ -366,15 +366,30 @@ color: black"
         displayGoogleEvents(){
             text(`Hello: ${this.name} `,this.welcomeLoc.x-60, this.welcomeLoc.y);
 
+            fill(152, 229, 152, 150);
+            strokeWeight(0);
+            rect(this.googleEventLoc.tempX-10, this.googleEventLoc.tempY - 15, 200, 25, 9);
 
             if(this.eventList !=null && this.eventList.length >0){
                 textSize(14);
-                text(`Upcomming Events`, this.googleEventLoc.tempX, this.googleEventLoc.tempY -30);
                 fill(255);
+                text(`Upcoming Events`, this.googleEventLoc.tempX, this.googleEventLoc.tempY -40);
                 this.eventList.forEach((evt,i)=>{
-                    textSize(14);
-                    text(`${evt} `, this.googleEventLoc.tempX, this.googleEventLoc.tempY+i*15);
-                    fill(255);
+                    if (i){
+                        textSize(14);
+                        fill(255);
+                        stroke(60);
+                        strokeWeight(1);
+                        text(`${evt} `, this.googleEventLoc.tempX, this.googleEventLoc.tempY+i*25);
+                    }
+                    else {
+                        textSize(14);
+                        fill(0);
+                        stroke(60);
+                        strokeWeight(1);
+                        text(`${evt} `, this.googleEventLoc.tempX, this.googleEventLoc.tempY+i*25);
+                    }
+
                 })
             }
 
@@ -425,9 +440,9 @@ color: black"
             },
 
             weatherLoc: {
-                x: 10,
+                x: 190,
                 y: 30,
-                tempX: 10,
+                tempX: 190,
                 tempY: 30,
                 w: 150,
                 h: 100,
@@ -444,11 +459,11 @@ color: black"
             },
             twitterLoc: {
                 x: 10,
-                y: 180,
+                y: 200,
                 w: 250,
                 h: 350,
                 tempX: 10,
-                tempY: 180,
+                tempY: 200,
                 color: '#FFF'
             },
             healthStepLoc: {
