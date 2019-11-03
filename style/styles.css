@@ -1,13 +1,24 @@
-.sleepchart{
+.barchart-step{
     display: block;
     position: absolute;
     margin-top: 500px;
     margin-left: 100px;
 }
 
-.stepchart{
+.piechart-sleep{
     display: block;
     position: absolute;
     margin-top: 500px;
-    margin-left: 100px;
+    margin-left: 400px;
+}
+
+path.slice{
+    stroke-width:2px;
+}
+
+polyline{
+    opacity: .3;
+    stroke: black;
+    stroke-width: 2px;
+    fill: none;
 }

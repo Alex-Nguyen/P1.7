@@ -201,7 +201,7 @@
             })
 
             sleep.once('value',function (wholeTree) {
-                // barchart(wholeTree)
+                piechartSleep(wholeTree)
             })
 
             walkingDistance.once("value",function (d) {
@@ -846,9 +846,8 @@
             .ticks(10);
 
         let svg = d3.select("body").append("svg")
-
             .attr("id",'sleep')
-            .attr("class", "sleepchart")
+            .attr("class", "barchart-step")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
@@ -890,85 +889,167 @@
             .attr("y", function(d) { return y(d.value); })
             .attr("height", function(d) { return height - y(d.value); });
     }
-    function piechart(wholeTree) {
-        console.log(wholeTree)
+
+    function piechartSleep(wholeTree) {
+        // console.log(wholeTree)
 
 // Parse the date / time
         let	parseDate = d3.time.format("%d-%b-%Y").parse;
+        var format = d3.time.format("%m-%d");
         let count = 0;
         let data = [];
         wholeTree.forEach(item=>{
-            data.push({date:parseDate(item.key), value:+item.val()/(60*60)});
+            data.push({
+                date:format(new Date(Date.parse(parseDate(item.key)))),
+                value:+item.val()/(60*60)});
             count += 1;
         });
         data = data.sort(function (a,b) {
             return a.date - b.date
         })
 
-
-
-        let margin = {top: 20, right: 20, bottom: 70, left: 40},
-            width = 50*count - margin.left - margin.right,
-            height = 200 - margin.top - margin.bottom;
-
-        let x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
-
-        let y = d3.scale.linear().range([height, 0]);
-
-        let xAxis = d3.svg.axis()
-            .scale(x)
-            .orient("bottom")
-            .tickFormat(d3.time.format("%d-%m"));
-
-        let yAxis = d3.svg.axis()
-            .scale(y)
-            .orient("left")
-            .ticks(10);
-
-        let svg = d3.select("body").append("svg")
-
-            .attr("id",'sleep')
-            .attr("class", "sleepchart")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
+        var svg = d3.select("body")
+            .append("svg")
+            .attr("width", 250)
+            .attr("height", 150)
+            .attr("class", "piechart-sleep")
             .append("g")
-            .attr("transform",
-                "translate(" + margin.left + "," + margin.top + ")");
-
-        x.domain(data.map(function(d) { return d.date; }));
-        y.domain([0, d3.max(data, function(d) { return d.value; })]);
 
         svg.append("g")
-            .attr("class", "x axis")
-            .attr("transform", "translate(0," + height + ")")
-            .call(xAxis)
-            .selectAll("text")
-            .style("text-anchor", "end")
-            .attr('class','text')
-            .attr("dx", "-.8em")
-            .attr("dy", "-.55em")
-            .attr("transform", "rotate(-90)" )
-        ;
-
+            .attr("class", "slices");
         svg.append("g")
-            .attr("class", "y axis")
-            .call(yAxis.ticks(5))
-            .append("text")
-            .attr("transform", "rotate(-90)")
-            .attr("y", 6)
-            .attr("dy", ".71em")
-            .style("text-anchor", "end")
-            .text("Step ");
+            .attr("class", "labels");
+        svg.append("g")
+            .attr("class", "lines");
 
-        svg.selectAll("bar")
-            .data(data)
-            .enter().append("rect")
-            .style("fill", "steelblue")
-            .style('opacity',0.3)
-            .attr("x", function(d) { return x(d.date); })
-            .attr("width", x.rangeBand())
-            .attr("y", function(d) { return y(d.value); })
-            .attr("height", function(d) { return height - y(d.value); });
+        var width = 250,
+            height = 150,
+            radius = Math.min(width, height) / 2;
+
+        var pie = d3.layout.pie()
+            .sort(null)
+            .value(function(d) {
+                return d.value;
+            });
+
+        var arc = d3.svg.arc()
+            .outerRadius(radius * 0.8)
+            .innerRadius(radius * 0.4);
+
+        var outerArc = d3.svg.arc()
+            .innerRadius(radius * 0.9)
+            .outerRadius(radius * 0.9);
+
+        svg.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+        var key = function(d){ return d.data.date; };
+
+        var color = d3.scale.ordinal()
+            .domain(data.map(d => d.date))
+            .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56"]);
+
+        function randomData (){
+            var labels = color.domain();
+            console.log(labels)
+            return labels.map(function(label){
+                return { date: label, value: Math.random() }
+            });
+        }
+
+        console.log(randomData ());
+        change(data);
+
+        function change(data) {
+
+            /* ------- PIE SLICES -------*/
+            var slice = svg.select(".slices").selectAll("path.slice")
+                .data(pie(data), key);
+
+            slice.enter()
+                .insert("path")
+                .style("fill", function(d) { return color(d.data.date); })
+                .attr("class", "slice");
+
+            slice
+                .transition().duration(1000)
+                .attrTween("d", function(d) {
+                    this._current = this._current || d;
+                    var interpolate = d3.interpolate(this._current, d);
+                    this._current = interpolate(0);
+                    return function(t) {
+                        return arc(interpolate(t));
+                    };
+                })
+
+            slice.exit()
+                .remove();
+
+            /* ------- TEXT LABELS -------*/
+
+            var text = svg.select(".labels").selectAll("text")
+                .data(pie(data), key);
+
+            text.enter()
+                .append("text")
+                .attr("dy", ".35em")
+                .text(function(d) {
+                    return d.data.date;
+                });
+
+            function midAngle(d){
+                return d.startAngle + (d.endAngle - d.startAngle)/2;
+            }
+
+            text.transition().duration(1000)
+                .attrTween("transform", function(d) {
+                    this._current = this._current || d;
+                    var interpolate = d3.interpolate(this._current, d);
+                    this._current = interpolate(0);
+                    return function(t) {
+                        var d2 = interpolate(t);
+                        var pos = outerArc.centroid(d2);
+                        pos[0] = radius * (midAngle(d2) < Math.PI ? 1 : -1);
+                        return "translate("+ pos +")";
+                    };
+                })
+                .styleTween("text-anchor", function(d){
+                    this._current = this._current || d;
+                    var interpolate = d3.interpolate(this._current, d);
+                    this._current = interpolate(0);
+                    return function(t) {
+                        var d2 = interpolate(t);
+                        return midAngle(d2) < Math.PI ? "start":"end";
+                    };
+                });
+
+            text.exit()
+                .remove();
+
+            /* ------- SLICE TO TEXT POLYLINES -------*/
+
+            var polyline = svg.select(".lines").selectAll("polyline")
+                .data(pie(data), key);
+
+            polyline.enter()
+                .append("polyline");
+
+            polyline.transition().duration(1000)
+                .attrTween("points", function(d){
+                    this._current = this._current || d;
+                    var interpolate = d3.interpolate(this._current, d);
+                    this._current = interpolate(0);
+                    return function(t) {
+                        var d2 = interpolate(t);
+                        var pos = outerArc.centroid(d2);
+                        pos[0] = radius * 0.95 * (midAngle(d2) < Math.PI ? 1 : -1);
+                        return [arc.centroid(d2), outerArc.centroid(d2), pos];
+                    };
+                });
+
+            polyline.exit()
+                .remove();
+        };
+
     }
 </script>
 </html>
