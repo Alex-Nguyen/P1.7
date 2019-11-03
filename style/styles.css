@@ -9,10 +9,32 @@
     display: block;
     position: absolute;
     margin-top: 500px;
-    margin-left: 400px;
+    margin-left: 500px;
+}
+
+.linechart{
+    display: block;
+    position: absolute;
+    margin-top: 500px;
+    margin-left: 900px;
+}
+
+path {
+    stroke: steelblue;
+    stroke-width: 2;
+    fill: none;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: grey;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
 }
 
 path.slice{
+    stroke: none;
     stroke-width:2px;
 }
 

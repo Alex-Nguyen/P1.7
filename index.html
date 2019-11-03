@@ -204,12 +204,9 @@
                 piechartSleep(wholeTree)
             })
 
-            walkingDistance.once("value",function (d) {
-                d.forEach(item=>{
-                    _this.healthkitWalkingData.push({date:parseDate(item.key), value:+item.val()})
-                });
-            }).then(console.log(_this.healthkitWalkingData))
-
+            walkingDistance.once("value",function (wholeTree) {
+                linechartWalking(wholeTree)
+            })
 
         //     new
         //
@@ -224,7 +221,7 @@
                video.volume(0.8);
                video.style("z-index",100)
                video.size(200, 150);
-               video.position(window.innerWidth - 250, window.innerHeight - 180)
+               video.position(window.innerWidth - 250, window.innerHeight - 580)
            });
 
         }
@@ -890,6 +887,79 @@
             .attr("height", function(d) { return height - y(d.value); });
     }
 
+    function linechartWalking(wholeTree) {
+        console.log(wholeTree)
+// Parse the date / time
+
+        let count = 0;
+        var parseDate = d3.time.format("%d-%b-%Y").parse;
+        let data = [];
+        wholeTree.forEach(item=>{
+            data.push({
+                date:parseDate(item.key),
+                value:+item.val()});
+
+            count += 1;
+        });
+        data = data.sort(function (a,b) {
+            return a.date - b.date
+        })
+
+        console.log(data)
+
+        var margin = {top: 30, right: 20, bottom: 30, left: 50},
+            width = 300 - margin.left - margin.right,
+            height = 150 - margin.top - margin.bottom;
+
+
+// Set the ranges
+        var x = d3.time.scale().range([0, width]);
+        var y = d3.scale.linear().range([height, 0]);
+
+// Define the axes
+        var xAxis = d3.svg.axis().scale(x)
+            .orient("bottom").ticks(count);
+
+        var yAxis = d3.svg.axis().scale(y)
+            .orient("left").ticks(5);
+
+// Define the line
+        var valueline = d3.svg.line()
+            .x(function(d) { return x(d.date); })
+            .y(function(d) { return y(d.value); });
+
+// Adds the svg canvas
+        var svg = d3.select("body")
+            .append("svg")
+            .attr("class", "linechart")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
+
+            // Scale the range of the data
+            x.domain(d3.extent(data, function(d) { return d.date; }));
+            y.domain([0, d3.max(data, function(d) { return d.value; })]);
+
+            // Add the valueline path.
+            svg.append("path")
+                .attr("class", "line")
+                .attr("d", valueline(data));
+
+            // Add the X Axis
+            svg.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis);
+
+            // Add the Y Axis
+            svg.append("g")
+                .attr("class", "y axis")
+                .call(yAxis);
+
+
+    }
     function piechartSleep(wholeTree) {
         // console.log(wholeTree)
 
@@ -955,8 +1025,6 @@
                 return { date: label, value: Math.random() }
             });
         }
-
-        console.log(randomData ());
         change(data);
 
         function change(data) {
