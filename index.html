@@ -28,6 +28,7 @@
             this.clockLoc = params.clockLoc;
             this.twitterLoc = params.twitterLoc;
             this.healthStepLoc = params.healthStepLoc;
+            this.healthSleepLoc = params.healthSleepLoc;
             this.welcomeLoc = params.welcomeLoc;
             this.googleEventLoc = params.googleEventLoc;
             this.apiKey = params.googleAPIkey;
@@ -204,13 +205,92 @@
                 d.forEach(item=>{
                     _this.healthkitSleepData.push({date:parseDate(item.key), value:+item.val()})
                 });
-            }).then(console.log(_this.healthkitSleepData))
+            })
 
             walkingDistance.once("value",function (d) {
                 d.forEach(item=>{
                     _this.healthkitWalkingData.push({date:parseDate(item.key), value:+item.val()})
                 });
             }).then(console.log(_this.healthkitWalkingData))
+
+
+        //     new
+
+            let vinhSteps = rootNode.child("vinh-steps");
+            vinhSteps.once("value",function (wholeTree) {
+                let margin = {top: 20, right: 20, bottom: 70, left: 40},
+                    width = 300 - margin.left - margin.right,
+                    height = 200 - margin.top - margin.bottom;
+
+// Parse the date / time
+                let	parseDate = d3.time.format("%d-%b-%Y").parse;
+
+                let x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
+
+                let y = d3.scale.linear().range([height, 0]);
+
+                let xAxis = d3.svg.axis()
+                    .scale(x)
+                    .orient("bottom")
+                    .tickFormat(d3.time.format("%d-%m"));
+
+                let yAxis = d3.svg.axis()
+                    .scale(y)
+                    .orient("left")
+                    .ticks(10);
+
+                let svg = d3.select("body").append("svg").attr("id",'step')
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom)
+                    .append("g")
+                    .attr("transform",
+                        "translate(" + margin.left + "," + margin.top + ")");
+                let data = [];
+                wholeTree.forEach(item=>{
+                    data.push({date:parseDate(item.key), value:+item.val()})
+                });
+                data = data.sort(function (a,b) {
+                    return a.date - b.date
+                })
+                x.domain(data.map(function(d) { return d.date; }));
+                y.domain([0, d3.max(data, function(d) { return d.value; })]);
+
+                svg.append("g")
+                    .attr("class", "x axis")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(xAxis)
+                    .selectAll("text")
+                    .style("text-anchor", "end")
+                    .attr('class','text')
+                    .attr("dx", "-.8em")
+                    .attr("dy", "-.55em")
+                    .attr("transform", "rotate(-90)" );
+
+                svg.append("g")
+                    .attr("class", "y axis")
+                    .call(yAxis)
+                    .append("text")
+                    .attr("transform", "rotate(-90)")
+                    .attr("y", 6)
+                    .attr("dy", ".71em")
+                    .style("text-anchor", "end")
+                    .text("Step(s)");
+
+                svg.selectAll("bar")
+                    .data(data)
+                    .enter().append("rect")
+                    .style("fill", "steelblue")
+                    .style('opacity',0.3)
+                    .attr("x", function(d) { return x(d.date); })
+                    .attr("width", x.rangeBand())
+                    .attr("y", function(d) { return y(d.value); })
+                    .attr("height", function(d) { return height - y(d.value); });
+            })
+
+            let vinhSleeps = rootNode.child('vinh-sleep');
+            vinhSleeps.once('value',function (wholeTree) {
+                barchart(wholeTree)
+            })
         }
         loadYouTubeVideo(){
            var video = createVideo(['videos/mov_bbb.mp4'], function () {
@@ -396,6 +476,14 @@
                 w: 300,
                 h: 100,
                 tempX:400,
+                tempY: window.innerHeight - 100,
+            },
+            healthSleepLoc: {
+                x: 600,
+                y: window.innerHeight - 100,
+                w: 300,
+                h: 100,
+                tempX:600,
                 tempY: window.innerHeight - 100,
             },
             welcomeLoc: {
@@ -713,6 +801,76 @@
     function btnMoveMousePressed() {
         isDraggable = false;
         btnMove.hide()
+    }
+
+    function barchart(wholeTree) {
+        let margin = {top: 20, right: 20, bottom: 70, left: 40},
+            width = 300 - margin.left - margin.right,
+            height = 200 - margin.top - margin.bottom;
+
+// Parse the date / time
+        let	parseDate = d3.time.format("%d-%b-%Y").parse;
+
+        let x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
+
+        let y = d3.scale.linear().range([height, 0]);
+
+        let xAxis = d3.svg.axis()
+            .scale(x)
+            .orient("bottom")
+            .tickFormat(d3.time.format("%d-%m"));
+
+        let yAxis = d3.svg.axis()
+            .scale(y)
+            .orient("left")
+            .ticks(10);
+
+        let svg = d3.select("body").append("svg").attr("id",'sleep')
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
+        let data = [];
+        wholeTree.forEach(item=>{
+            data.push({date:parseDate(item.key), value:+item.val()/(60*60)})
+        });
+        data = data.sort(function (a,b) {
+            return a.date - b.date
+        })
+        x.domain(data.map(function(d) { return d.date; }));
+        y.domain([0, d3.max(data, function(d) { return d.value; })]);
+
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis)
+            .selectAll("text")
+            .style("text-anchor", "end")
+            .attr('class','text')
+            .attr("dx", "-.8em")
+            .attr("dy", "-.55em")
+            .attr("transform", "rotate(-90)" );
+
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+            .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", ".71em")
+            .style("text-anchor", "end")
+            .text("Sleep(hours)");
+
+        svg.selectAll("bar")
+            .data(data)
+            .enter().append("rect")
+            .style("fill", "steelblue")
+            .style('opacity',0.3)
+            .attr("x", function(d) { return x(d.date); })
+            .attr("width", x.rangeBand())
+            .attr("y", function(d) { return y(d.value); })
+            .attr("height", function(d) { return height - y(d.value); });
     }
 </script>
 </html>

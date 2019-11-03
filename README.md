@@ -77,8 +77,8 @@ Step 7: Syn your data to Firebase
 ````
 
 ### Huyen Nguyen
-
+````
 1. Personalize user data
-
-
+2. Visualize health data
+````
 ### Linh Manh
