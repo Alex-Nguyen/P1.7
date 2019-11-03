@@ -12,10 +12,26 @@
     <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-analytics.js"></script>
+    <!-- Remember to include jQuery :) -->
+    <!-- jQuery Modal -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
 </head>
 <body>
 <div id="timeline" style="display: none"></div>
+<div id="ex1" class="modal">
+    <p>Time format: <b>24</b> | 12 hour</p>
+    <p>Region: US</p>
+    <a href="#" rel="modal:close">Close</a>
+</div>
 
+<!-- Link to open the modal -->
+<div><a href="#ex1" rel="modal:open"><i style="position: absolute;
+ margin-bottom: 10px;
+ margin-right: 10px;
+color: black"
+        class="fas fa-cogs fa-3x"></i></a></div>
 </body>
 <script>
     /**
@@ -208,12 +224,7 @@
                 linechartWalking(wholeTree)
             })
 
-        //     new
-        //
-        //     let vinhSleeps = rootNode.child('huyen-sleep');
-        //     vinhSleeps.once('value',function (wholeTree) {
-        //         barchart(wholeTree)
-        //     })
+
         }
         loadYouTubeVideo(){
            var video = createVideo(['videos/mov_bbb.mp4'], function () {
@@ -221,7 +232,7 @@
                video.volume(0.8);
                video.style("z-index",100)
                video.size(200, 150);
-               video.position(window.innerWidth - 250, window.innerHeight - 580)
+               video.position(window.innerWidth - 250, window.innerHeight - 380)
            });
 
         }
@@ -270,7 +281,7 @@
         displayWeather() {
             noStroke();
             this.weatherLoc.active === true ? fill("#808080") : noFill();
-            rect(this.weatherLoc.tempX, this.weatherLoc.tempY, this.weatherLoc.w, this.weatherLoc.h);
+            rect(this.weatherLoc.tempX, this.weatherLoc.tempY-10, this.weatherLoc.w, this.weatherLoc.h);
 
             image(this.weatherIcon, this.weatherLoc.tempX, this.weatherLoc.tempY, 50, 50);
 
@@ -279,7 +290,7 @@
             textSize(18);
             text(this.weatherData.main.temp + "°", this.weatherLoc.tempX + 40, this.weatherLoc.tempY + 10);
             fill(255);
-            textSize(12);
+            textSize(14);
             textStyle(BOLD);
             fill(255, 255, 0)
             text('C', this.weatherLoc.tempX + 110, this.weatherLoc.tempY + 5);
@@ -288,7 +299,7 @@
             fill(255);
             text(' | F', this.weatherLoc.tempX + 120, this.weatherLoc.tempY + 5);
             fill(255);
-            textSize(12);
+            textSize(14);
             text(`${this.weatherData.main.temp_max}° / ${this.weatherData.main.temp_min}°`, this.weatherLoc.tempX + 50, this.weatherLoc.tempY + 25);
             fill(255);
             text(`Humidity: ${this.weatherData.main.humidity}%`, this.weatherLoc.tempX + 50, this.weatherLoc.tempY + 40);
@@ -301,12 +312,13 @@
             text(`${hour()}:${minute()}`, this.clockLoc.tempX, this.clockLoc.tempY);
 
             fill(255);
-            textSize(12);
-            text(`${this.today}, ${this.monthInText[month() - 1]}, ${year()} `, this.clockLoc.tempX - 20, this.clockLoc.tempY + 20);
+            textSize(14);
+            text(`${this.today} ${day()}, ${this.monthInText[month() - 1]}, ${year()} `, this.clockLoc.tempX - 50,
+                this.clockLoc.tempY + 20);
 
         }
         displayGoogleEvents(){
-            text(`Hello: ${this.name} `,this.welcomeLoc.x-30, this.welcomeLoc.y);
+            text(`Hello: ${this.name} `,this.welcomeLoc.x-60, this.welcomeLoc.y);
 
 
             if(this.eventList !=null && this.eventList.length >0){
@@ -314,7 +326,7 @@
                 text(`Upcomming Events`, this.googleEventLoc.tempX, this.googleEventLoc.tempY -30);
                 fill(255);
                 this.eventList.forEach((evt,i)=>{
-                    textSize(12);
+                    textSize(14);
                     text(`${evt} `, this.googleEventLoc.tempX, this.googleEventLoc.tempY+i*15);
                     fill(255);
                 })
@@ -335,7 +347,7 @@
         displayHealthKit() {
             if(this.healthkitStepData.length > 0){
                 this.healthkitStepData.forEach((evt,i)=>{
-                    textSize(12);
+                    textSize(14);
                     rect(this.healthStepLoc.tempX + (i*15), this.healthStepLoc.tempY - evt.value/100, 10, evt.value/100)
                     fill(255);
                     text("Step Counts", this.healthStepLoc.tempX, this.healthStepLoc.tempY + 20)
@@ -362,14 +374,14 @@
             },
             name: "Vinh T. Nguyen",
             twitterSpec: {
-                account:  "VinhTTU",
+                account:  "huyendoesstuff",
                 limit: 4,
             },
 
             weatherLoc: {
-                x: 150,
+                x: 10,
                 y: 30,
-                tempX: 150,
+                tempX: 10,
                 tempY: 30,
                 w: 150,
                 h: 100,
@@ -381,7 +393,7 @@
                 w: 200,
                 h: 200,
                 tempX: window.innerWidth / 2,
-                tempY: 30,
+                tempY: 50,
                 color: '#FFF'
             },
             twitterLoc: {
@@ -553,7 +565,7 @@
         CANVAS = createCanvas(windowWidth, windowHeight);
         CANVAS.style("z-index",-1)
         btnMove = createButton('Done');
-        btnMove.position(width - 50, 19);
+        btnMove.position(width - 70, 50);
         btnMove.mousePressed(btnMoveMousePressed)
         btnMove.hide();
         btnBrighness = createButton('Brighness')
@@ -835,7 +847,8 @@
         let xAxis = d3.svg.axis()
             .scale(x)
             .orient("bottom")
-            .tickFormat(d3.time.format("%d-%m"));
+            .tickFormat(d3.time.format("%a %d"))
+        ;
 
         let yAxis = d3.svg.axis()
             .scale(y)
@@ -866,6 +879,18 @@
             .attr("transform", "rotate(-90)" )
         ;
 
+
+
+        svg.selectAll("bar")
+            .data(data)
+            .enter().append("rect")
+            .style("fill", "steelblue")
+            .style('opacity',0.5)
+            .attr("x", function(d) { return x(d.date); })
+            .attr("width", x.rangeBand())
+            .attr("y", function(d) { return y(d.value); })
+            .attr("height", function(d) { return height - y(d.value); });
+
         svg.append("g")
             .attr("class", "y axis")
             .call(yAxis.ticks(5))
@@ -875,16 +900,6 @@
             .attr("dy", ".71em")
             .style("text-anchor", "end")
             .text("Step count ");
-
-        svg.selectAll("bar")
-            .data(data)
-            .enter().append("rect")
-            .style("fill", "steelblue")
-            .style('opacity',0.3)
-            .attr("x", function(d) { return x(d.date); })
-            .attr("width", x.rangeBand())
-            .attr("y", function(d) { return y(d.value); })
-            .attr("height", function(d) { return height - y(d.value); });
     }
 
     function linechartWalking(wholeTree) {
@@ -909,7 +924,7 @@
 
         var margin = {top: 30, right: 20, bottom: 30, left: 50},
             width = 300 - margin.left - margin.right,
-            height = 150 - margin.top - margin.bottom;
+            height = 170 - margin.top - margin.bottom;
 
 
 // Set the ranges
@@ -956,7 +971,13 @@
             // Add the Y Axis
             svg.append("g")
                 .attr("class", "y axis")
-                .call(yAxis);
+                .call(yAxis)
+                .append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 6)
+                .attr("dy", ".71em")
+                .style("text-anchor", "end")
+                .text("Walking (miles)");;
 
 
     }
@@ -965,7 +986,7 @@
 
 // Parse the date / time
         let	parseDate = d3.time.format("%d-%b-%Y").parse;
-        var format = d3.time.format("%m-%d");
+        var format = d3.time.format("%a %d");
         let count = 0;
         let data = [];
         wholeTree.forEach(item=>{
@@ -978,10 +999,15 @@
             return a.date - b.date
         })
 
+        var width = 250,
+            height = 150,
+            height2 = 170,
+            radius = Math.min(width, height) / 2;
+
         var svg = d3.select("body")
             .append("svg")
-            .attr("width", 250)
-            .attr("height", 150)
+            .attr("width", width)
+            .attr("height", height2)
             .attr("class", "piechart-sleep")
             .append("g")
 
@@ -992,9 +1018,7 @@
         svg.append("g")
             .attr("class", "lines");
 
-        var width = 250,
-            height = 150,
-            radius = Math.min(width, height) / 2;
+
 
         var pie = d3.layout.pie()
             .sort(null)
@@ -1036,6 +1060,7 @@
             slice.enter()
                 .insert("path")
                 .style("fill", function(d) { return color(d.data.date); })
+                .style("opacity", 0.8)
                 .attr("class", "slice");
 
             slice
@@ -1116,6 +1141,10 @@
 
             polyline.exit()
                 .remove();
+
+            svg.append("text")
+                .attr("transform", "translate(-40,90)")
+                .text("Sleep (hours)")
         };
 
     }

@@ -1,22 +1,22 @@
 .barchart-step{
     display: block;
     position: absolute;
-    margin-top: 500px;
-    margin-left: 100px;
+    margin-top: 520px;
+    margin-left: 200px;
 }
 
 .piechart-sleep{
     display: block;
     position: absolute;
-    margin-top: 500px;
+    margin-top: 520px;
     margin-left: 500px;
 }
 
 .linechart{
     display: block;
     position: absolute;
-    margin-top: 500px;
-    margin-left: 900px;
+    margin-top: 520px;
+    margin-left: 800px;
 }
 
 path {
@@ -44,3 +44,14 @@ polyline{
     stroke-width: 2px;
     fill: none;
 }
+
+body {
+    font-family: sans-serif;
+    color: white;
+}
+
+text {
+    fill: white;
+    font-size: 14px
+}
+
