@@ -1,6 +1,9 @@
 # Human Computer Interaction - Project 1
 # Page
-https://alex-nguyen.github.io/P1.7/.
+<https://alex-nguyen.github.io/P1.7/>
+
+Video:
+<http://youtube.com/embed/XpfwFVF3j5o>
 
 # Sketch
 https://alex-nguyen.github.io/P1.7/sketch-presentation/sketch.html
@@ -132,3 +135,16 @@ Implementing the interface for the general information and health information
     
     
 ### Part A
+
+Layout for the mirror:
+
+![](https://i.imgur.com/gTutJHT.png)
+
+Interactive features:
+
+![](https://i.imgur.com/E5SED3w.png)
+
+Video:
+<http://youtube.com/embed/XpfwFVF3j5o>
+
+
