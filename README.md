@@ -81,6 +81,9 @@ Step 6: Grant access to HealthKit Data from your phone
 Step 7: Syn your data to Firebase
 
 ````
+2. Create framework and coordinate members to do given tasks.
+3. Provide data ready for viz
+4. Create viz template
 
 ### Huyen Nguyen
 
