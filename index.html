@@ -65,7 +65,16 @@
     </svg>
 </div>
 
-<iframe src="https://open.spotify.com/embed/playlist/397OIYc5tHxzQezM9okBF2" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+<iframe id="spotify" src="https://open.spotify.com/embed/playlist/397OIYc5tHxzQezM9okBF2" width="320"
+        height="210" frameborder="0" allowtransparency="true" allow="encrypted-media"
+        style="position: absolute; margin-top: 550px;"
+></iframe>
+
+<iframe id="youtube" width="250" src="https://www.youtube.com/embed/yY96hTb8WgI?autoplay=1&mute=1"
+        frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+        style="position: absolute; margin-top: 383px;"
+></iframe>
 </body>
 <script>
     /**
@@ -261,13 +270,19 @@
 
         }
         loadYouTubeVideo(){
-           var video = createVideo(['videos/mov_bbb.mp4'], function () {
-               video.play()
-               video.volume(0.8);
-               video.style("z-index",100)
-               video.size(200, 150);
-               video.position(window.innerWidth - 250, window.innerHeight - 380)
-           });
+           // var video = createVideo(['videos/mov_bbb.mp4'], function () {
+           //     video.play()
+           //     video.volume(0.8);
+           //     video.style("z-index",100)
+           //     video.size(200, 150);
+           //     video.position(window.innerWidth - 250, window.innerHeight - 380)
+           // });
+
+            d3.select("#youtube")
+                .style("margin-left", ((window.innerWidth) - 280) + "px");
+
+            d3.select("#spotify")
+                .style("margin-left", (5) + "px");
 
         }
         shakenWeatherBox() {
@@ -405,7 +420,7 @@
         displayTwitter() {
             // transback
            fill(180,120)
-            rect(this.twitterLoc.tempX-5, 200, 330, this.twitterData.length* 60 + 30, 15)
+            rect(this.twitterLoc.tempX, 200, 320, this.twitterData.length* 60 + 30, 15)
             textSize(14);
             fill(255);
             if (this.twitterData.length > 0) {
@@ -421,7 +436,7 @@
         displayHealthKit() {
             // transback
             fill(180,120)
-            rect(130, 570, 1060, 200, 15);
+            rect(360, 570, 1060, 200, 15);
 
             // if(this.healthkitStepData.length > 0){
             //     this.healthkitStepData.forEach((evt,i)=>{
@@ -506,10 +521,10 @@
                 h: 100,
             },
             googleEventLoc:{
-                x: window.innerWidth - 300,
-                y: 150,
-                tempX: window.innerWidth - 300,
-                tempY: 150,
+                x: window.innerWidth - 310,
+                y: 260,
+                tempX: window.innerWidth - 310,
+                tempY: 260,
                 w: 200,
                 h: 400,
                 color: '#FFF'
@@ -643,17 +658,17 @@
         CANVAS = createCanvas(windowWidth, windowHeight);
         CANVAS.style("z-index",-1)
         btnMove = createButton('Done');
-        btnMove.position(width - 70, 50);
+        btnMove.position(width - 70, 100);
         btnMove.mousePressed(btnMoveMousePressed)
         btnMove.hide();
         btnBrighness = createButton('Brighness')
-        btnBrighness.position(19, height - 60)
+        btnBrighness.position(windowWidth - 125, height - 750)
         btnBrighness.style("background-color", "#000");
         btnBrighness.style("color", "#fff");
         btnBrighness.size(100, 40)
         btnBrighness.mousePressed(btnBrighnessMousePressed)
         slider = createSlider(0, 255, 200);
-        slider.position(19, height - 90);
+        slider.position(windowWidth - 240, height - 740);
         slider.style('width', '100px');
         slider.hide()
         WEBCAM = createCapture(VIDEO);

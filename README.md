@@ -80,6 +80,7 @@ Step 7: Syn your data to Firebase
 ````
 1. Personalize user data
 2. Visualize health data
-3. Design menu and customize widgets
+3. Popup top menu
+4. Transparent design for the interface 
 ````
 ### Linh Manh

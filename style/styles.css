@@ -2,21 +2,21 @@
     display: block;
     position: absolute;
     margin-top: 580px;
-    margin-left: 120px;
+    margin-left: 370px;
 }
 
 .piechart-sleep{
     display: block;
     position: absolute;
     margin-top: 580px;
-    margin-left: 520px;
+    margin-left: 770px;
 }
 
 .linechart{
     display: block;
     position: absolute;
     margin-top: 580px;
-    margin-left: 820px;
+    margin-left: 1070px;
 }
 
 .path-chart {
