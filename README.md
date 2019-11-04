@@ -6,7 +6,7 @@ Video:
 <http://youtube.com/embed/XpfwFVF3j5o>
 
 # Sketch
-https://alex-nguyen.github.io/P1.7/sketch-presentation/sketch.html
+<https://alex-nguyen.github.io/P1.7/sketch-presentation/sketch.html>
 
 ## Group members:
 1. Vinh Nguyen (ID 79) - Team leader
@@ -69,6 +69,8 @@ refNodes.once("value",function (data) {
 ### Vinh Nguyen 
 
 1. Instruction to get and sync your data (from iPhone) to Firebase
+
+
 ````
 Step 1: Clone or Download the HealthKitForClass folder
 Step 2: Create an Apple Developer Account (https://developer.apple.com/programs/enroll/)
