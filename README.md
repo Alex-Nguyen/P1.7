@@ -14,11 +14,11 @@ https://alex-nguyen.github.io/HCIP1/sketch-presentation/sketch.html
 
 Before log in:
 
-![](https://alex-nguyen.github.io/HCIP1/sketch-presentation/images/before.png)
+![](https://alex-nguyen.github.io/P1.7/sketch-presentation/images/before.png)
 
 After log in:
 
-![](https://alex-nguyen.github.io/HCIP1/sketch-presentation/images/p1.group7.png)
+![](https://alex-nguyen.github.io/P1.7/sketch-presentation/images/p1.group7.png)
 
 
 ### Functions:
@@ -80,5 +80,6 @@ Step 7: Syn your data to Firebase
 ````
 1. Personalize user data
 2. Visualize health data
+3. Design menu and customize widgets
 ````
 ### Linh Manh
