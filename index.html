@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Magic Mirror Project - Group 7</title>
+    <link rel="stylesheet" href="style/styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/addons/p5.dom.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -11,10 +12,69 @@
     <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-analytics.js"></script>
+    <!-- Remember to include jQuery :) -->
+    <!-- jQuery Modal -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
 </head>
 <body>
 <div id="timeline" style="display: none"></div>
 
+<div class="pie pie1" onclick="document.body.classList.remove('active')">
+    <div class="pie-color pie-color1">
+<!--        <div class="absolute">Time format</div>-->
+        <svg class="card" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+            <image transform="translate(-20,-65)" href="images/timetext.png" width="100"
+            ></image>
+            <image href="images/timeFormat.png" width="100"></image>
+        </svg>
+    </div>
+</div>
+<div class="pie pie2" onclick="document.body.classList.remove('active')">
+    <div class="pie-color pie-color2">
+        <svg class="discount" xmlns="http://www.w3.org/2000/svg" viewBox="-375 377 100 100" width="100" height="100">
+            <image transform="translate(-380,375)" href="images/region1.png" width="55"></image>
+            <image transform="translate(-360,430) rotate(-40)" href="images/usflag.png" width="50"></image>
+        </svg>
+    </div>
+</div>
+<div class="pie pie3" onclick="document.body.classList.remove('active')">
+    <div class="pie-color pie-color3">
+        <svg class="cart" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+            <image transform="translate(0,6)" href="images/lang.png" width="40"></image>
+            <image transform="translate(30,23)" href="images/langop.png" width="60"></image>
+
+        </svg>
+    </div>
+</div>
+<div class="menu" onclick="document.body.classList.toggle('active')">
+    <svg class="hamburger" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
+        <g
+                fill="none"
+                stroke="#000"
+                stroke-width="7.999"
+                stroke-linecap="round"
+        >
+            <path d="M 55,26.000284 L 24.056276,25.999716" />
+            <path d="M 24.056276,49.999716 L 75.943724,50.000284" />
+            <path d="M 45,73.999716 L 75.943724,74.000284" />
+            <path d="M 75.943724,26.000284 L 45,25.999716" />
+            <path d="M 24.056276,73.999716 L 55,74.000284" />
+        </g>
+    </svg>
+</div>
+
+<iframe id="spotify" src="https://open.spotify.com/embed/playlist/397OIYc5tHxzQezM9okBF2" width="320"
+        height="210" frameborder="0" allowtransparency="true" allow="encrypted-media"
+        style="position: absolute; margin-top: 550px;"
+></iframe>
+
+<iframe id="youtube" width="250" src="https://www.youtube.com/embed/yY96hTb8WgI?autoplay=1&mute=1"
+        frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+        style="position: absolute; margin-top: 383px;"
+></iframe>
 </body>
 <script>
     /**
@@ -28,6 +88,7 @@
             this.clockLoc = params.clockLoc;
             this.twitterLoc = params.twitterLoc;
             this.healthStepLoc = params.healthStepLoc;
+            this.healthSleepLoc = params.healthSleepLoc;
             this.welcomeLoc = params.welcomeLoc;
             this.googleEventLoc = params.googleEventLoc;
             this.apiKey = params.googleAPIkey;
@@ -39,6 +100,8 @@
             this.isReady = false;
             this.twitterData = [];
             this.healthkitStepData =[];
+            this.healthkitSleepData =[];
+            this.healthkitWalkingData =[];
             this.loadWeatherData = this.loadWeatherData.bind(this)
             this.loadTwitterData = this.loadTwitterData.bind(this)
             this.loadGoogleEvent = this.loadGoogleEvent.bind(this)
@@ -188,21 +251,38 @@
 
             let	parseDate = d3.time.format("%d-%b-%Y").parse;
             let rootNode = firebase.database().ref()
-            let vinhSteps = rootNode.child("stepCount");
-            vinhSteps.once("value",function (stepCount) {
-                stepCount.forEach(item=>{
-                    _this.healthkitStepData.push({date:parseDate(item.key), value:+item.val()})
-                });
+            let stepCount = rootNode.child("huyen-stepCounts");
+            let sleep = rootNode.child("huyen-sleep");
+            let walkingDistance = rootNode.child("huyen-walkingDistance");
+
+            stepCount.once("value",function (wholeTree) {
+                barchartStep(wholeTree)
             })
+
+            sleep.once('value',function (wholeTree) {
+                piechartSleep(wholeTree)
+            })
+
+            walkingDistance.once("value",function (wholeTree) {
+                linechartWalking(wholeTree)
+            })
+
+
         }
         loadYouTubeVideo(){
-           var video = createVideo(['videos/mov_bbb.mp4'], function () {
-               video.play()
-               video.volume(0.8);
-               video.style("z-index",100)
-               video.size(200, 150);
-               video.position(window.innerWidth - 250, window.innerHeight - 180)
-           });
+           // var video = createVideo(['videos/mov_bbb.mp4'], function () {
+           //     video.play()
+           //     video.volume(0.8);
+           //     video.style("z-index",100)
+           //     video.size(200, 150);
+           //     video.position(window.innerWidth - 250, window.innerHeight - 380)
+           // });
+
+            d3.select("#youtube")
+                .style("margin-left", ((window.innerWidth) - 280) + "px");
+
+            d3.select("#spotify")
+                .style("margin-left", (5) + "px");
 
         }
         shakenWeatherBox() {
@@ -249,17 +329,19 @@
 
         displayWeather() {
             noStroke();
-            this.weatherLoc.active === true ? fill("#808080") : noFill();
-            rect(this.weatherLoc.tempX, this.weatherLoc.tempY, this.weatherLoc.w, this.weatherLoc.h);
+
+            // transback
+            this.weatherLoc.active === true ? fill("#808080") :fill(180,120);
+            rect(this.weatherLoc.tempX, this.weatherLoc.tempY-20, this.weatherLoc.w, this.weatherLoc.h, 15);
 
             image(this.weatherIcon, this.weatherLoc.tempX, this.weatherLoc.tempY, 50, 50);
 
 
             fill(this.weatherLoc.color);
-            textSize(18);
-            text(this.weatherData.main.temp + "°", this.weatherLoc.tempX + 40, this.weatherLoc.tempY + 10);
+            textSize(20);
+            text(this.weatherData.main.temp + "°", this.weatherLoc.tempX + 40, this.weatherLoc.tempY+8);
             fill(255);
-            textSize(12);
+            textSize(14);
             textStyle(BOLD);
             fill(255, 255, 0)
             text('C', this.weatherLoc.tempX + 110, this.weatherLoc.tempY + 5);
@@ -268,7 +350,7 @@
             fill(255);
             text(' | F', this.weatherLoc.tempX + 120, this.weatherLoc.tempY + 5);
             fill(255);
-            textSize(12);
+            textSize(14);
             text(`${this.weatherData.main.temp_max}° / ${this.weatherData.main.temp_min}°`, this.weatherLoc.tempX + 50, this.weatherLoc.tempY + 25);
             fill(255);
             text(`Humidity: ${this.weatherData.main.humidity}%`, this.weatherLoc.tempX + 50, this.weatherLoc.tempY + 40);
@@ -277,31 +359,70 @@
         }
 
         displayClock() {
+
+            // transback
+            fill(180,120)
+            rect(this.clockLoc.tempX - 60, this.clockLoc.tempY - 35, 190, 70, 15);
+
+            fill(255);
             textSize(30);
             text(`${hour()}:${minute()}`, this.clockLoc.tempX, this.clockLoc.tempY);
 
             fill(255);
-            textSize(12);
-            text(`${this.today}, ${this.monthInText[month() - 1]}, ${year()} `, this.clockLoc.tempX - 20, this.clockLoc.tempY + 20);
+            textSize(14);
+            text(`${this.today} ${day()}, ${this.monthInText[month() - 1]}, ${year()} `, this.clockLoc.tempX - 50,
+                this.clockLoc.tempY + 20);
 
         }
         displayGoogleEvents(){
-            text(`Hello: ${this.name} `,this.welcomeLoc.x-30, this.welcomeLoc.y);
+            // transback
+            fill(180,120)
+            rect(this.welcomeLoc.x-70, this.welcomeLoc.y - 15, 190, 20, 5);
+
+            textSize(14);
+            fill(255);
+            text(`Hello: ${this.name} `,this.welcomeLoc.x-60, this.welcomeLoc.y);
+
+            // transback
+           fill(180,120)
+            rect(this.googleEventLoc.tempX-10, this.googleEventLoc.tempY - 65, 300, 160, 15);
+
+
+            fill(152, 229, 152, 150);
+            strokeWeight(0);
+            rect(this.googleEventLoc.tempX-10, this.googleEventLoc.tempY - 15, 200, 25, 9);
 
 
             if(this.eventList !=null && this.eventList.length >0){
                 textSize(14);
-                text(`Upcomming Events`, this.googleEventLoc.tempX, this.googleEventLoc.tempY -30);
                 fill(255);
+                text(`Upcoming Events`, this.googleEventLoc.tempX, this.googleEventLoc.tempY -40);
                 this.eventList.forEach((evt,i)=>{
-                    textSize(12);
-                    text(`${evt} `, this.googleEventLoc.tempX, this.googleEventLoc.tempY+i*15);
-                    fill(255);
+                    if (i){
+                        textSize(14);
+                        fill(255);
+                        // stroke(60);
+                        // strokeWeight(1);
+                        text(`${evt} `, this.googleEventLoc.tempX, this.googleEventLoc.tempY+i*25);
+                    }
+                    else {
+                        textSize(14);
+                        fill(0);
+                        // stroke(60);
+                        // strokeWeight(1);
+                        text(`${evt} `, this.googleEventLoc.tempX, this.googleEventLoc.tempY+i*25);
+                    }
+
                 })
             }
 
         }
         displayTwitter() {
+            // transback
+           fill(180,120)
+            rect(this.twitterLoc.tempX, 200, 320, this.twitterData.length* 60 + 30, 15)
+            textSize(14);
+            fill(255);
             if (this.twitterData.length > 0) {
                 this.twitterData.forEach((tweet, index) => {
                     image(tweet.imgUrl, this.twitterLoc.tempX + 10, this.twitterLoc.tempY + index * 60, 50, 50);
@@ -313,14 +434,18 @@
 
         }
         displayHealthKit() {
-            if(this.healthkitStepData.length > 0){
-                this.healthkitStepData.forEach((evt,i)=>{
-                    textSize(12);
-                    rect(this.healthStepLoc.tempX + (i*15), this.healthStepLoc.tempY - evt.value/100, 10, evt.value/100)
-                    fill(255);
-                    text("Step Counts", this.healthStepLoc.tempX, this.healthStepLoc.tempY + 20)
-                })
-            }
+            // transback
+            fill(180,120)
+            rect(360, 570, 1060, 200, 15);
+
+            // if(this.healthkitStepData.length > 0){
+            //     this.healthkitStepData.forEach((evt,i)=>{
+            //         textSize(14);
+            //         rect(this.healthStepLoc.tempX + (i*15), this.healthStepLoc.tempY - evt.value/100, 10, evt.value/100)
+            //         fill(255);
+            //         text("Step Counts", this.healthStepLoc.tempX, this.healthStepLoc.tempY + 20)
+            //     })
+            // }
 
         }
     }
@@ -342,17 +467,17 @@
             },
             name: "Vinh T. Nguyen",
             twitterSpec: {
-                account:  "VinhTTU",
+                account:  "huyendoesstuff",
                 limit: 4,
             },
 
             weatherLoc: {
-                x: 150,
+                x: 190,
                 y: 30,
-                tempX: 150,
+                tempX: 190,
                 tempY: 30,
                 w: 150,
-                h: 100,
+                h: 80,
                 color: '#FFF'
             },
             clockLoc: {
@@ -361,16 +486,16 @@
                 w: 200,
                 h: 200,
                 tempX: window.innerWidth / 2,
-                tempY: 30,
+                tempY: 50,
                 color: '#FFF'
             },
             twitterLoc: {
                 x: 10,
-                y: 150,
+                y: 220,
                 w: 250,
                 h: 350,
                 tempX: 10,
-                tempY: 150,
+                tempY: 220,
                 color: '#FFF'
             },
             healthStepLoc: {
@@ -381,6 +506,14 @@
                 tempX:400,
                 tempY: window.innerHeight - 100,
             },
+            healthSleepLoc: {
+                x: 600,
+                y: window.innerHeight - 100,
+                w: 300,
+                h: 100,
+                tempX:600,
+                tempY: window.innerHeight - 100,
+            },
             welcomeLoc: {
                 x: window.innerWidth - 200,
                 y: 30,
@@ -388,10 +521,10 @@
                 h: 100,
             },
             googleEventLoc:{
-                x: window.innerWidth - 300,
-                y: 150,
-                tempX: window.innerWidth - 300,
-                tempY: 150,
+                x: window.innerWidth - 310,
+                y: 260,
+                tempX: window.innerWidth - 310,
+                tempY: 260,
                 w: 200,
                 h: 400,
                 color: '#FFF'
@@ -525,17 +658,17 @@
         CANVAS = createCanvas(windowWidth, windowHeight);
         CANVAS.style("z-index",-1)
         btnMove = createButton('Done');
-        btnMove.position(width - 50, 19);
+        btnMove.position(width - 70, 100);
         btnMove.mousePressed(btnMoveMousePressed)
         btnMove.hide();
         btnBrighness = createButton('Brighness')
-        btnBrighness.position(19, height - 60)
+        btnBrighness.position(windowWidth - 125, height - 750)
         btnBrighness.style("background-color", "#000");
         btnBrighness.style("color", "#fff");
         btnBrighness.size(100, 40)
         btnBrighness.mousePressed(btnBrighnessMousePressed)
         slider = createSlider(0, 255, 200);
-        slider.position(19, height - 90);
+        slider.position(windowWidth - 240, height - 740);
         slider.style('width', '100px');
         slider.hide()
         WEBCAM = createCapture(VIDEO);
@@ -696,6 +829,420 @@
     function btnMoveMousePressed() {
         isDraggable = false;
         btnMove.hide()
+    }
+
+    function barchartSleep(wholeTree) {
+        console.log(wholeTree)
+
+// Parse the date / time
+        let	parseDate = d3.time.format("%d-%b-%Y").parse;
+        let count = 0;
+        let data = [];
+        wholeTree.forEach(item=>{
+            data.push({date:parseDate(item.key), value:+item.val()/(60*60)});
+            count += 1;
+        });
+        data = data.sort(function (a,b) {
+            return a.date - b.date
+        })
+
+        console.log(data)
+
+        let margin = {top: 20, right: 20, bottom: 70, left: 40},
+            width = 50*count - margin.left - margin.right,
+            height = 200 - margin.top - margin.bottom;
+
+        let x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
+
+        let y = d3.scale.linear().range([height, 0]);
+
+        let xAxis = d3.svg.axis()
+            .scale(x)
+            .orient("bottom")
+            .tickFormat(d3.time.format("%d-%m"));
+
+        let yAxis = d3.svg.axis()
+            .scale(y)
+            .orient("left")
+            .ticks(10);
+
+        let svg = d3.select("body").append("svg")
+
+            .attr("id",'sleep')
+            .attr("class", "sleepchart")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
+
+        x.domain(data.map(function(d) { return d.date; }));
+        y.domain([0, d3.max(data, function(d) { return d.value; })]);
+
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis)
+            .selectAll("text")
+            .style("text-anchor", "end")
+            .attr('class','text')
+            .attr("dx", "-.8em")
+            .attr("dy", "-.55em")
+            .attr("transform", "rotate(-90)" )
+        ;
+
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis.ticks(5))
+            .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", ".71em")
+            .style("text-anchor", "end")
+            .text("Sleep (hours)");
+
+        svg.selectAll("bar")
+            .data(data)
+            .enter().append("rect")
+            .style("fill", "steelblue")
+            .style('opacity',0.3)
+            .attr("x", function(d) { return x(d.date); })
+            .attr("width", x.rangeBand())
+            .attr("y", function(d) { return y(d.value); })
+            .attr("height", function(d) { return height - y(d.value); });
+    }
+
+    function barchartStep(wholeTree) {
+        console.log(wholeTree)
+
+// Parse the date / time
+        let	parseDate = d3.time.format("%d-%b-%Y").parse;
+        let count = 0;
+        let data = [];
+        wholeTree.forEach(item=>{
+            data.push({date:parseDate(item.key), value:+item.val()});
+            count += 1;
+        });
+        data = data.sort(function (a,b) {
+            return a.date - b.date
+        })
+
+        console.log(data)
+
+        let margin = {top: 20, right: 20, bottom: 70, left: 60},
+            width = 70*count - margin.left - margin.right,
+            height = 200 - margin.top - margin.bottom;
+
+        let x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
+
+        let y = d3.scale.linear().range([height, 0]);
+
+        let xAxis = d3.svg.axis()
+            .scale(x)
+            .orient("bottom")
+            .tickFormat(d3.time.format("%a %d"))
+        ;
+
+        let yAxis = d3.svg.axis()
+            .scale(y)
+            .orient("left")
+            .ticks(10);
+
+        let svg = d3.select("body").append("svg")
+            .attr("id",'sleep')
+            .attr("class", "barchart-step")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
+
+        x.domain(data.map(function(d) { return d.date; }));
+        y.domain([0, d3.max(data, function(d) { return d.value; })]);
+
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis)
+            .selectAll("text")
+            .style("text-anchor", "middle")
+            .attr('class','text')
+            // .attr("dx", "-.8em")
+            // .attr("dy", "-.55em")
+            .attr("dy", ".6em")
+            // .attr("transform", "rotate(-90)" )
+        ;
+
+
+
+        svg.selectAll("bar")
+            .data(data)
+            .enter().append("rect")
+            .style("fill", "steelblue")
+            .style('opacity',0.5)
+            .attr("x", function(d) { return x(d.date); })
+            .attr("width", x.rangeBand())
+            .attr("y", function(d) { return y(d.value); })
+            .attr("height", function(d) { return height - y(d.value); });
+
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis.ticks(5))
+            .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", ".71em")
+            .style("text-anchor", "end")
+            .text("Step count ");
+    }
+
+
+    function piechartSleep(wholeTree) {
+        // console.log(wholeTree)
+
+// Parse the date / time
+        let	parseDate = d3.time.format("%d-%b-%Y").parse;
+        var format = d3.time.format("%a %d");
+        let count = 0;
+        let data = [];
+        wholeTree.forEach(item=>{
+            data.push({
+                date:format(new Date(Date.parse(parseDate(item.key)))),
+                value:+item.val()/(60*60)});
+            count += 1;
+        });
+        data = data.sort(function (a,b) {
+            return a.date - b.date
+        })
+
+        var width = 250,
+            height = 150,
+            height2 = 170,
+            radius = Math.min(width, height) / 2;
+
+        var svg = d3.select("body")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height2)
+            .attr("class", "piechart-sleep")
+            .append("g")
+
+        svg.append("g")
+            .attr("class", "slices");
+        svg.append("g")
+            .attr("class", "labels");
+        svg.append("g")
+            .attr("class", "lines");
+
+
+
+        var pie = d3.layout.pie()
+            .sort(null)
+            .value(function(d) {
+                return d.value;
+            });
+
+        var arc = d3.svg.arc()
+            .outerRadius(radius * 0.8)
+            .innerRadius(radius * 0.4);
+
+        var outerArc = d3.svg.arc()
+            .innerRadius(radius * 0.9)
+            .outerRadius(radius * 0.9);
+
+        svg.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+        var key = function(d){ return d.data.date; };
+
+        var color = d3.scale.ordinal()
+            .domain(data.map(d => d.date))
+            .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56"]);
+
+        function randomData (){
+            var labels = color.domain();
+            console.log(labels)
+            return labels.map(function(label){
+                return { date: label, value: Math.random() }
+            });
+        }
+        change(data);
+
+        function change(data) {
+
+            /* ------- PIE SLICES -------*/
+            var slice = svg.select(".slices").selectAll("path.slice")
+                .data(pie(data), key);
+
+            slice.enter()
+                .insert("path")
+                .style("fill", function(d) { return color(d.data.date); })
+                .style("opacity", 0.8)
+                .attr("class", "slice");
+
+            slice
+                .transition().duration(1000)
+                .attrTween("d", function(d) {
+                    this._current = this._current || d;
+                    var interpolate = d3.interpolate(this._current, d);
+                    this._current = interpolate(0);
+                    return function(t) {
+                        return arc(interpolate(t));
+                    };
+                })
+
+            slice.exit()
+                .remove();
+
+            /* ------- TEXT LABELS -------*/
+
+            var text = svg.select(".labels").selectAll("text")
+                .data(pie(data), key);
+
+            text.enter()
+                .append("text")
+                .attr("dy", ".35em")
+                .text(function(d) {
+                    return d.data.date;
+                });
+
+            function midAngle(d){
+                return d.startAngle + (d.endAngle - d.startAngle)/2;
+            }
+
+            text.transition().duration(1000)
+                .attrTween("transform", function(d) {
+                    this._current = this._current || d;
+                    var interpolate = d3.interpolate(this._current, d);
+                    this._current = interpolate(0);
+                    return function(t) {
+                        var d2 = interpolate(t);
+                        var pos = outerArc.centroid(d2);
+                        pos[0] = radius * (midAngle(d2) < Math.PI ? 1 : -1);
+                        return "translate("+ pos +")";
+                    };
+                })
+                .styleTween("text-anchor", function(d){
+                    this._current = this._current || d;
+                    var interpolate = d3.interpolate(this._current, d);
+                    this._current = interpolate(0);
+                    return function(t) {
+                        var d2 = interpolate(t);
+                        return midAngle(d2) < Math.PI ? "start":"end";
+                    };
+                });
+
+            text.exit()
+                .remove();
+
+            /* ------- SLICE TO TEXT POLYLINES -------*/
+
+            var polyline = svg.select(".lines").selectAll("polyline")
+                .data(pie(data), key);
+
+            polyline.enter()
+                .append("polyline");
+
+            polyline.transition().duration(1000)
+                .attrTween("points", function(d){
+                    this._current = this._current || d;
+                    var interpolate = d3.interpolate(this._current, d);
+                    this._current = interpolate(0);
+                    return function(t) {
+                        var d2 = interpolate(t);
+                        var pos = outerArc.centroid(d2);
+                        pos[0] = radius * 0.95 * (midAngle(d2) < Math.PI ? 1 : -1);
+                        return [arc.centroid(d2), outerArc.centroid(d2), pos];
+                    };
+                });
+
+            polyline.exit()
+                .remove();
+
+            svg.append("text")
+                .attr("transform", "translate(-40,90)")
+                .text("Sleep (hours)")
+        };
+
+    }
+
+    function linechartWalking(wholeTree) {
+        console.log(wholeTree)
+// Parse the date / time
+
+        let count = 0;
+        var parseDate = d3.time.format("%d-%b-%Y").parse;
+        let data = [];
+        wholeTree.forEach(item=>{
+            data.push({
+                date:parseDate(item.key),
+                value:+item.val()});
+
+            count += 1;
+        });
+        data = data.sort(function (a,b) {
+            return a.date - b.date
+        })
+
+        console.log(data)
+
+        var margin = {top: 30, right: 20, bottom: 30, left: 50},
+            width = 300 - margin.left - margin.right,
+            height = 170 - margin.top - margin.bottom;
+
+
+// Set the ranges
+        var x = d3.time.scale().range([0, width]);
+        var y = d3.scale.linear().range([height, 0]);
+
+// Define the axes
+        var xAxis = d3.svg.axis().scale(x)
+            .orient("bottom").ticks(count);
+
+        var yAxis = d3.svg.axis().scale(y)
+            .orient("left").ticks(5);
+
+// Define the line
+        var valueline = d3.svg.line()
+            .x(function(d) { return x(d.date); })
+            .y(function(d) { return y(d.value); });
+
+// Adds the svg canvas
+        var svg = d3.select("body")
+            .append("svg")
+            .attr("class", "linechart")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
+
+        // Scale the range of the data
+        x.domain(d3.extent(data, function(d) { return d.date; }));
+        y.domain([0, d3.max(data, function(d) { return d.value; })]);
+
+        // Add the valueline path.
+        svg.append("path")
+            .attr("class", "path-chart")
+            .attr("d", valueline(data));
+
+        // Add the X Axis
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis);
+
+        // Add the Y Axis
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+            .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", ".71em")
+            .style("text-anchor", "end")
+            .text("Walking (miles)");;
+
+
     }
 </script>
 </html>

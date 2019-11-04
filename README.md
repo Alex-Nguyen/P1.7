@@ -1,9 +1,9 @@
 # Human Computer Interaction - Project 1
 # Page
-https://alex-nguyen.github.io/HCIP1/.
+https://alex-nguyen.github.io/P1.7/.
 
 # Sketch
-https://alex-nguyen.github.io/HCIP1/sketch-presentation/sketch.html
+https://alex-nguyen.github.io/P1.7/sketch-presentation/sketch.html
 
 ## Group members:
 1. Vinh Nguyen (ID 79) - Team leader
@@ -14,11 +14,11 @@ https://alex-nguyen.github.io/HCIP1/sketch-presentation/sketch.html
 
 Before log in:
 
-![](https://alex-nguyen.github.io/HCIP1/sketch-presentation/images/before.png)
+![](https://alex-nguyen.github.io/P1.7/sketch-presentation/images/before.png)
 
 After log in:
 
-![](https://alex-nguyen.github.io/HCIP1/sketch-presentation/images/p1.group7.png)
+![](https://alex-nguyen.github.io/P1.7/sketch-presentation/images/p1.group7.png)
 
 
 ### Functions:
@@ -77,8 +77,10 @@ Step 7: Syn your data to Firebase
 ````
 
 ### Huyen Nguyen
-
+````
 1. Personalize user data
-
-
+2. Visualize health data
+3. Popup top menu
+4. Transparent design for the interface 
+````
 ### Linh Manh
