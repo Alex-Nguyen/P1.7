@@ -1,9 +1,9 @@
 # Human Computer Interaction - Project 1
 # Page
-https://alex-nguyen.github.io/HCIP1/.
+https://alex-nguyen.github.io/P1.7/.
 
 # Sketch
-https://alex-nguyen.github.io/HCIP1/sketch-presentation/sketch.html
+https://alex-nguyen.github.io/P1.7/sketch-presentation/sketch.html
 
 ## Group members:
 1. Vinh Nguyen (ID 79) - Team leader

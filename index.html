@@ -20,19 +20,6 @@
 </head>
 <body>
 <div id="timeline" style="display: none"></div>
-<!--<div id="ex1" class="modal">-->
-<!--    <p>Time format: <b>24</b> | 12 hour</p>-->
-<!--    <p>Region: US</p>-->
-<!--    <a href="#" rel="modal:close">Close</a>-->
-<!--</div>-->
-
-<!-- Link to open the modal -->
-<!--<a href="#ex1" rel="modal:open">-->
-<!--    <i style="position: absolute;-->
-<!-- bottom: 10px;-->
-<!-- right: 10px;-->
-<!--color: black"-->
-<!--       class="fas fa-cogs fa-3x"></i></a>-->
 
 <div class="pie pie1" onclick="document.body.classList.remove('active')">
     <div class="pie-color pie-color1">
@@ -77,6 +64,8 @@
         </g>
     </svg>
 </div>
+
+<iframe src="https://open.spotify.com/embed/playlist/397OIYc5tHxzQezM9okBF2" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
 </body>
 <script>
     /**
@@ -325,15 +314,17 @@
 
         displayWeather() {
             noStroke();
-            this.weatherLoc.active === true ? fill("#808080") : noFill();
-            rect(this.weatherLoc.tempX, this.weatherLoc.tempY-10, this.weatherLoc.w, this.weatherLoc.h);
+
+            // transback
+            this.weatherLoc.active === true ? fill("#808080") :fill(180,120);
+            rect(this.weatherLoc.tempX, this.weatherLoc.tempY-20, this.weatherLoc.w, this.weatherLoc.h, 15);
 
             image(this.weatherIcon, this.weatherLoc.tempX, this.weatherLoc.tempY, 50, 50);
 
 
             fill(this.weatherLoc.color);
-            textSize(18);
-            text(this.weatherData.main.temp + "°", this.weatherLoc.tempX + 40, this.weatherLoc.tempY + 10);
+            textSize(20);
+            text(this.weatherData.main.temp + "°", this.weatherLoc.tempX + 40, this.weatherLoc.tempY+8);
             fill(255);
             textSize(14);
             textStyle(BOLD);
@@ -353,6 +344,12 @@
         }
 
         displayClock() {
+
+            // transback
+            fill(180,120)
+            rect(this.clockLoc.tempX - 60, this.clockLoc.tempY - 35, 190, 70, 15);
+
+            fill(255);
             textSize(30);
             text(`${hour()}:${minute()}`, this.clockLoc.tempX, this.clockLoc.tempY);
 
@@ -363,11 +360,23 @@
 
         }
         displayGoogleEvents(){
+            // transback
+            fill(180,120)
+            rect(this.welcomeLoc.x-70, this.welcomeLoc.y - 15, 190, 20, 5);
+
+            textSize(14);
+            fill(255);
             text(`Hello: ${this.name} `,this.welcomeLoc.x-60, this.welcomeLoc.y);
+
+            // transback
+           fill(180,120)
+            rect(this.googleEventLoc.tempX-10, this.googleEventLoc.tempY - 65, 300, 160, 15);
+
 
             fill(152, 229, 152, 150);
             strokeWeight(0);
             rect(this.googleEventLoc.tempX-10, this.googleEventLoc.tempY - 15, 200, 25, 9);
+
 
             if(this.eventList !=null && this.eventList.length >0){
                 textSize(14);
@@ -377,15 +386,15 @@
                     if (i){
                         textSize(14);
                         fill(255);
-                        stroke(60);
-                        strokeWeight(1);
+                        // stroke(60);
+                        // strokeWeight(1);
                         text(`${evt} `, this.googleEventLoc.tempX, this.googleEventLoc.tempY+i*25);
                     }
                     else {
                         textSize(14);
                         fill(0);
-                        stroke(60);
-                        strokeWeight(1);
+                        // stroke(60);
+                        // strokeWeight(1);
                         text(`${evt} `, this.googleEventLoc.tempX, this.googleEventLoc.tempY+i*25);
                     }
 
@@ -394,6 +403,11 @@
 
         }
         displayTwitter() {
+            // transback
+           fill(180,120)
+            rect(this.twitterLoc.tempX-5, 200, 330, this.twitterData.length* 60 + 30, 15)
+            textSize(14);
+            fill(255);
             if (this.twitterData.length > 0) {
                 this.twitterData.forEach((tweet, index) => {
                     image(tweet.imgUrl, this.twitterLoc.tempX + 10, this.twitterLoc.tempY + index * 60, 50, 50);
@@ -405,14 +419,18 @@
 
         }
         displayHealthKit() {
-            if(this.healthkitStepData.length > 0){
-                this.healthkitStepData.forEach((evt,i)=>{
-                    textSize(14);
-                    rect(this.healthStepLoc.tempX + (i*15), this.healthStepLoc.tempY - evt.value/100, 10, evt.value/100)
-                    fill(255);
-                    text("Step Counts", this.healthStepLoc.tempX, this.healthStepLoc.tempY + 20)
-                })
-            }
+            // transback
+            fill(180,120)
+            rect(130, 570, 1060, 200, 15);
+
+            // if(this.healthkitStepData.length > 0){
+            //     this.healthkitStepData.forEach((evt,i)=>{
+            //         textSize(14);
+            //         rect(this.healthStepLoc.tempX + (i*15), this.healthStepLoc.tempY - evt.value/100, 10, evt.value/100)
+            //         fill(255);
+            //         text("Step Counts", this.healthStepLoc.tempX, this.healthStepLoc.tempY + 20)
+            //     })
+            // }
 
         }
     }
@@ -444,7 +462,7 @@
                 tempX: 190,
                 tempY: 30,
                 w: 150,
-                h: 100,
+                h: 80,
                 color: '#FFF'
             },
             clockLoc: {
@@ -458,11 +476,11 @@
             },
             twitterLoc: {
                 x: 10,
-                y: 200,
+                y: 220,
                 w: 250,
                 h: 350,
                 tempX: 10,
-                tempY: 200,
+                tempY: 220,
                 color: '#FFF'
             },
             healthStepLoc: {
