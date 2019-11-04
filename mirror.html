@@ -472,9 +472,9 @@
             },
 
             weatherLoc: {
-                x: 190,
+                x: 200,
                 y: 30,
-                tempX: 190,
+                tempX: 200,
                 tempY: 30,
                 w: 150,
                 h: 80,
@@ -662,13 +662,13 @@
         btnMove.mousePressed(btnMoveMousePressed)
         btnMove.hide();
         btnBrighness = createButton('Brighness')
-        btnBrighness.position(windowWidth - 125, height - 750)
+        btnBrighness.position(windowWidth - 125, 45)
         btnBrighness.style("background-color", "#000");
         btnBrighness.style("color", "#fff");
         btnBrighness.size(100, 40)
         btnBrighness.mousePressed(btnBrighnessMousePressed)
         slider = createSlider(0, 255, 200);
-        slider.position(windowWidth - 240, height - 740);
+        slider.position(windowWidth - 240, 55);
         slider.style('width', '100px');
         slider.hide()
         WEBCAM = createCapture(VIDEO);

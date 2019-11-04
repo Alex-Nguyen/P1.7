@@ -62,9 +62,10 @@ refNodes.once("value",function (data) {
 }
 ````
 
-## Work reports
+# Work reports
 ### Vinh Nguyen 
-1. Instruction to get and syn your data (from iPhone) to Firebase
+
+1. Instruction to get and sync your data (from iPhone) to Firebase
 ````
 Step 1: Clone or Download the HealthKitForClass folder
 Step 2: Create an Apple Developer Account (https://developer.apple.com/programs/enroll/)
@@ -77,10 +78,57 @@ Step 7: Syn your data to Firebase
 ````
 
 ### Huyen Nguyen
-````
-1. Personalize user data
-2. Visualize health data
-3. Popup top menu
-4. Transparent design for the interface 
-````
+
+1. Sketch drawing
+2. Widgets:
+    
+    - Health data visualization
+    - Pop up menu 
+    - Music player 
+    - Autoplay video
+3. Transparent design for all widgets 
+4. Overall layout and widget position 
+5. Project report
+
 ### Linh Manh
+
+# Report for project 1
+### Part C
+
+Implementing the interface for the general information and health information 
+
+- User log in
+- Personalized calendar events for today
+- Personalized Twitter feed
+- Clock
+- Local weather
+- The mirror can be connected to Wifi and synched with smart phone for health data
+
+
+### Part B
+
+- Personalized health data, including:
+    
+    - Step counts (by number of step): By bar chart
+    - Sleep data (by hours): By pie chart, for the recent days
+    - Walking distance (by miles)
+    
+    
+- User can customize the display for widget locations
+
+- Music player with Spotify playlist: Play, pause, next, previous, pointing to a specific second
+
+- Video with autoplay function: Play, pause
+
+- Calendar highlight important event
+
+- Screen brightness adjustment
+
+- Pop up menu contains:
+    
+    - Time format (24h | 12h)
+    - Region: The current country (e.g., U.S.)
+    - Language: English, Spanish, ...
+    
+    
+### Part A
